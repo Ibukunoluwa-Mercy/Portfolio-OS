@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULATOR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #272727;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            background: black;
+            border-radius: 30px;
+            padding: 20px;
+            max-width: 450px;
+            width: 100%;
+            border: 2px solid #5E5E5E;
+        }
+
+        .input {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        #inputNumber {
+            width: 100%;
+            padding: 20px;
+            font-size: 42px;
+            font-weight: bold;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #333;
+            border-radius: 15px;
+            text-align: right;
+        }
+
+        .first, .second, .third, .fourth {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .first:last-of-type {
+            grid-template-columns: repeat(3, 1fr);
+            margin-bottom: 0;
+        }
+
+        .first:last-of-type button:nth-child(3) {
+            grid-column: 3 / 4;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border: 1px solid #FFA500;
+            background: transparent;
+            color: #FFA500;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.9);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.8);
+            background: transparent;
+            border: none;
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .first button:nth-child(1),
+        .first button:nth-child(2),
+        .first button:nth-child(3) {
+            background: #ff9500;
+            color: #000;
+            border-color: #ff9500;
+        }
+
+        .first button:nth-child(1):hover,
+        .first button:nth-child(2):hover,
+        .first button:nth-child(3):hover {
+            background: transparent;
+            color: #ff9500;
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.9);
+        }
+
+        .first button:nth-child(4),
+        .second button:nth-child(4),
+        .third button:nth-child(4),
+        .fourth button:nth-child(4) {
+            background: #ff9500;
+            color: #000;
+            border-color: #ff9500;
+        }
+
+        .first button:nth-child(4):hover,
+        .second button:nth-child(4):hover,
+        .third button:nth-child(4):hover,
+        .fourth button:nth-child(4):hover {
+            background: transparent;
+            color: #ff9500;
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.9);
+        }
+
+        .first:last-of-type button:nth-child(3) {
+            background: #ff9500;
+            color: #000;
+            border-color: #ff9500;
+            grid-column: span 1;
+        }
+
+        .first:last-of-type button:nth-child(3):hover {
+            background: transparent;
+            color: #ff9500;
+            box-shadow: 0 6px 20px rgba(255, 149, 0, 0.9);
+        }
+
+        button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class = "container">
+<div class="input">
+    <input type="text" id="inputNumber" placeholder="0" readonly>
+</div>
+
+<div class="first">
+<button onclick="clearChanges()">AC</button>
+<button onclick="deleteNumber()">DEL</button>
+<button onclick="resultDisplay('%')">%</button>
+<button onclick="resultDisplay('+')">+</button>
+</div>
+
+<div class="second">
+<button onclick="resultDisplay('7')">7</button>
+<button onclick="resultDisplay('8')">8</button>
+<button onclick="resultDisplay('9')">9</button>
+<button onclick="resultDisplay('-')">-</button>
+</div>
+
+<div class="third">
+<button onclick="resultDisplay('4')">4</button>
+<button onclick="resultDisplay('5')">5</button>
+<button onclick="resultDisplay('6')">6</button>
+<button onclick="resultDisplay('×')">×</button>
+</div>
+
+<div class="fourth">
+<button onclick="resultDisplay('3')">3</button>
+<button onclick="resultDisplay('2')">2</button>
+<button onclick="resultDisplay('1')">1</button>
+<button onclick="resultDisplay('÷')">÷</button>
+</div>
+
+<div class="first">
+<button onclick="resultDisplay('0')">0</button>
+<button onclick="resultDisplay('.')">.</button>
+<button onclick="calculate()">=</button>
+</div>
+
+    </div>
+</body>
+<script>
+
+const displayNumber = document.getElementById('inputNumber');
+function resultDisplay(show) {
+    displayNumber.value += show;
+}
+function calculate() {
+    try {
+        let expression = displayNumber.value;
+        expression = expression.replace(/×/g, '*').replace(/÷/g, '/');
+        expression = expression.replace(/(\d+\.?\d*)\s*%/g, '($1/100)');
+        displayNumber.value = eval(expression);
+    } 
+    catch (error) {
+        displayNumber.value = "Error";
+    }
+}
+function clearChanges() {
+    displayNumber.value = "";
+}
+function deleteNumber() {
+    displayNumber.value = displayNumber.value.slice(0, -1);
+}
+</script>
+</html>
+
+

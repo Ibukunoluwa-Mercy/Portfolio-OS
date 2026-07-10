@@ -1,0 +1,4224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Windows 11 </title>
+  <style>
+    :root {
+      --accent: #f97316;
+      --accent-hover: #fb923c;
+      --accent-muted: rgba(249, 115, 22, 0.2);
+      --accent-glow: rgba(249, 115, 22, 0.15);
+
+      --surface: #1e1c1b;
+      --surface-2: #2c2926;
+      --surface-3: #3a3633;
+
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.6);
+      --text-subtle: rgba(255, 255, 255, 0.35);
+
+      --glass: rgba(255, 255, 255, 0.06);
+      --glass-accent: rgba(249, 115, 22, 0.08);
+      --blur: blur(20px);
+
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(249, 115, 22, 0.4);
+
+      --radius-window: 8px;
+      --radius-btn: 4px;
+      --radius-card: 6px;
+
+      --transition: cubic-bezier(0.4, 0, 0.2, 1);
+
+      --shadow-window: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+      --shadow-accent: 0 0 20px rgba(249, 115, 22, 0.25);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Roboto", sans-serif;
+      overflow: hidden;
+      user-select: none;
+      transition: filter 0.3s ease;
+    }
+
+    body.energy-saver .window,
+    body.energy-saver .start-menu,
+    body.energy-saver .quick-settings,
+    body.energy-saver .lock-screen,
+    body.energy-saver .login-screen,
+    body.energy-saver .taskbar {
+      opacity: 0.85;
+    }
+
+    body.energy-saver .desktop-icon-img {
+      opacity: 0.8;
+    }
+
+    ::selection {
+      background: rgba(249, 115, 22, 0.35);
+      color: #fff;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(249, 115, 22, 0.4);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: url('background.png') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: transform 0.8s var(--transition), opacity 0.8s var(--transition);
+    }
+
+    .lock-screen.unlocking {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .lock-time {
+      font-size: 96px;
+      font-weight: 300;
+      color: var(--text);
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+      letter-spacing: -2px;
+    }
+
+    .lock-date {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--text);
+      margin-top: -8px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .lock-prompt {
+      position: absolute;
+      bottom: 100px;
+      font-size: 14px;
+      color: var(--text-muted);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.6;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .login-screen {
+      position: fixed;
+      inset: 0;
+      background: url('background.png') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s var(--transition), transform 0.6s var(--transition);
+    }
+
+    .login-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .login-screen.entering-desktop {
+      opacity: 0;
+      transform: scale(1.1);
+    }
+
+    .login-card {
+      width: 320px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: var(--shadow-window);
+    }
+
+    .profile-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+    }
+
+    .profile-avatar svg {
+      width: 50px;
+      height: 50px;
+      fill: white;
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .profile-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .btn-signin {
+      width: 100%;
+      padding: 10px 24px;
+      background: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s var(--transition), box-shadow 0.2s var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-signin:hover {
+      background: #1a86dc;
+      box-shadow: 0 4px 12px rgba(0, 120, 212, 0.4);
+    }
+
+    .btn-signin:active {
+      background: #006cc1;
+    }
+
+    .btn-signin::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s var(--transition);
+    }
+
+    .btn-signin:hover::after {
+      opacity: 1;
+    }
+
+    .desktop {
+      position: fixed;
+      inset: 0;
+      background: url('background.png') center/cover no-repeat;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.8s var(--transition);
+    }
+
+    .desktop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .desktop-icons {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .desktop-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 72px;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .desktop-icon:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .desktop-icon.selected {
+      background: rgba(255, 255, 255, 0.12);
+      outline: 1px solid var(--accent);
+    }
+
+    .desktop-icon-img {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .desktop-icon-img svg {
+      width: 40px;
+      height: 40px;
+    }
+
+    .desktop-icon-label {
+      font-size: 12px;
+      color: var(--text);
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .context-menu {
+      position: fixed;
+      background: rgba(36, 36, 36, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      min-width: 180px;
+      padding: 6px 0;
+      z-index: 3000;
+      display: none;
+    }
+
+    .context-menu.visible {
+      display: block;
+    }
+
+    .context-menu-item {
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: background 0.1s var(--transition);
+    }
+
+    .context-menu-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .context-menu-item svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+    }
+
+    .context-menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 12px;
+    }
+
+    .window {
+      position: absolute;
+      min-width: 400px;
+      min-height: 300px;
+      background: var(--surface-2);
+      border-radius: var(--radius-window);
+      box-shadow: var(--shadow-window);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.92);
+      transition: opacity 0.2s var(--transition), transform 0.2s var(--transition);
+    }
+
+    .window.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .window.minimizing {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.2s var(--transition), transform 0.25s var(--transition);
+    }
+
+    .window.restoring {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .window.maximized {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: calc(100% - 48px) !important;
+      border-radius: 0;
+    }
+
+    .window-titlebar {
+      height: 32px;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .window-icon {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+    }
+
+    .window-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .window-title {
+      flex: 1;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-btn {
+      width: 32px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.1s var(--transition);
+    }
+
+    .window-btn svg {
+      width: 10px;
+      height: 10px;
+      fill: var(--text);
+    }
+
+    .btn-min:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-max:hover {
+      background: rgba(249, 115, 22, 0.2);
+    }
+
+    .btn-close:hover {
+      background: #c42b1c;
+    }
+
+    .btn-close:hover svg {
+      fill: white;
+    }
+
+    .window-content {
+      flex: 1;
+      overflow: auto;
+      background: var(--surface);
+    }
+
+    .resize-handle {
+      position: absolute;
+      z-index: 10;
+    }
+
+    .resize-handle-n {
+      top: 0;
+      left: 10px;
+      right: 10px;
+      height: 6px;
+      cursor: n-resize;
+    }
+
+    .resize-handle-s {
+      bottom: 0;
+      left: 10px;
+      right: 10px;
+      height: 6px;
+      cursor: s-resize;
+    }
+
+    .resize-handle-e {
+      right: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 6px;
+      cursor: e-resize;
+    }
+
+    .resize-handle-w {
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 6px;
+      cursor: w-resize;
+    }
+
+    .resize-handle-ne {
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      cursor: ne-resize;
+    }
+
+    .resize-handle-nw {
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      cursor: nw-resize;
+    }
+
+    .resize-handle-se {
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      cursor: se-resize;
+    }
+
+    .resize-handle-sw {
+      bottom: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      cursor: sw-resize;
+    }
+
+    .snap-preview {
+      position: fixed;
+      background: rgba(0, 120, 212, 0.15);
+      border: 2px solid #0078d4;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+
+    .snap-preview.visible {
+      display: block;
+    }
+
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: rgba(30, 28, 27, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      z-index: 500;
+    }
+
+    .taskbar-windows {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      justify-content: flex-start;
+      padding-right: 20px;
+    }
+
+    .taskbar-window-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+      position: relative;
+      max-width: 160px;
+    }
+
+    .taskbar-window-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .taskbar-window-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 2px;
+      background: #0078d4;
+      border-radius: 1px;
+    }
+
+    .taskbar-window-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .taskbar-window-btn span {
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .taskbar-center {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .taskbar-left {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .taskbar-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+      position: relative;
+    }
+
+    .taskbar-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .taskbar-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text);
+    }
+
+    .taskbar-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition), border-color 0.15s var(--transition);
+      min-width: 280px;
+    }
+
+    .search-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-accent);
+    }
+
+    .search-pill svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .search-pill span {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .system-clock {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .system-clock:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .clock-time {
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .clock-date {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .system-icons {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .system-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .system-icon:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .system-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text);
+    }
+
+    .quick-settings {
+      position: absolute;
+      bottom: 60px;
+      right: 12px;
+      width: 360px;
+      background: #1f1f1f;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      display: none;
+      z-index: 1000;
+    }
+
+    .quick-settings.visible {
+      display: block;
+    }
+
+    .qs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .qs-header h3 {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .qs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .qs-tile {
+      background: #2d2d2d;
+      border: 1px solid #3d3d3d;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .qs-tile:hover {
+      background: #363636;
+    }
+
+    .qs-tile.active {
+      background: rgba(251, 146, 60, 0.2);
+      border-color: #fb923c;
+    }
+
+    .qs-tile.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .qs-tile svg {
+      width: 24px;
+      height: 24px;
+      fill: #fff;
+      margin-bottom: 8px;
+    }
+
+    .qs-tile span {
+      color: #fff;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .qs-tile .qs-status {
+      color: #888;
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .qs-tile.active .qs-status {
+      color: #fb923c;
+    }
+
+    .qs-tile .qs-expand {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: #888;
+    }
+
+    .qs-slider-section {
+      margin-bottom: 16px;
+    }
+
+    .qs-slider-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .qs-slider-label svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+    }
+
+    .qs-slider-label span {
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .qs-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #3d3d3d;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .qs-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #fb923c;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(251, 146, 60, 0.4);
+    }
+
+    .qs-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #fb923c;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .qs-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid #3d3d3d;
+    }
+
+    .qs-battery {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qs-battery svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .qs-battery span {
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .qs-settings svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+      cursor: pointer;
+    }
+
+    .settings-panel {
+      position: absolute;
+      bottom: 60px;
+      right: 12px;
+      width: 900px;
+      height: 600px;
+      background: rgba(32, 32, 32, 0.98);
+      backdrop-filter: blur(30px);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 1001;
+      overflow: hidden;
+    }
+
+    .settings-panel.visible {
+      display: flex;
+    }
+
+    .settings-sidebar {
+      width: 240px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .settings-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .settings-logo span {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .settings-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .settings-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .settings-nav-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .settings-nav-item.active {
+      background: rgba(249, 115, 22, 0.2);
+    }
+
+    .settings-nav-item svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .settings-nav-item span {
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .settings-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .settings-section-title {
+      color: #fff;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .settings-group {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .settings-group-title {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .settings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+
+    .settings-item-label {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .settings-item-desc {
+      color: #888;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .settings-toggle {
+      width: 40px;
+      height: 20px;
+      background: #3d3d3d;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .settings-toggle.active {
+      background: #fb923c;
+    }
+
+    .settings-toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+    }
+
+    .settings-toggle.active::after {
+      transform: translateX(20px);
+    }
+
+    .settings-slider-container {
+      padding: 12px 0;
+    }
+
+    .settings-slider-label {
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .settings-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #3d3d3d;
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .settings-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #fb923c;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .start-menu {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      width: 640px;
+      height: 700px;
+      background: rgba(32, 32, 32, 0.95);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s var(--transition), transform 0.2s var(--transition);
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .start-menu.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .start-search {
+      margin: 24px 32px 16px;
+    }
+
+    .start-search-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s var(--transition), box-shadow 0.2s var(--transition);
+    }
+
+    .start-search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .start-search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-muted);
+    }
+
+    .start-pinned {
+      padding: 0 32px;
+      margin-bottom: 24px;
+    }
+
+    .start-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .start-apps-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+
+    .start-app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .start-app:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .start-app-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .start-app-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .start-app-name {
+      font-size: 12px;
+      color: var(--text);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 80px;
+    }
+
+    .start-recommended {
+      padding: 0 32px;
+    }
+
+    .recommended-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .recommended-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .recommended-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .recommended-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .recommended-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .recommended-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .recommended-name {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .recommended-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .start-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .user-account {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.15s var(--transition);
+    }
+
+    .user-account:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .user-avatar-small {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-avatar-small svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+
+    .user-name-small {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .power-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .power-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .power-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text);
+    }
+
+    .power-menu {
+      position: absolute;
+      bottom: 48px;
+      right: -10px;
+      background: rgba(36, 36, 36, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      padding: 6px 0;
+      z-index: 201;
+      display: none;
+      min-width: 160px;
+    }
+
+    .power-menu.visible {
+      display: block;
+    }
+
+    .power-menu-item {
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 13px;
+      transition: background 0.15s;
+    }
+
+    .power-menu-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .power-menu-item svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="nightlightOverlay"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; display: none; background: rgba(255, 180, 100, 0.15);">
+  </div>
+  <div id="sleepOverlay"
+    style="position: fixed; inset: 0; background: black; z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center;">
+  </div>
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-time" id="lockTime">10:42</div>
+    <div class="lock-date" id="lockDate">Thursday, May 14</div>
+    <div class="lock-prompt">Click or press any key to unlock</div>
+  </div>
+
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="profile-avatar">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+      </div>
+      <div class="profile-name">Mercy</div>
+      <div class="profile-subtitle">Full Stack Developer</div>
+      <button class="btn-signin" id="signInBtn">Sign In</button>
+    </div>
+  </div>
+
+  <div class="desktop" id="desktop">
+    <div class="desktop-icons" id="desktopIcons">
+      <div class="desktop-icon" data-app="projects">
+        <div class="desktop-icon-img" style="background: #f97316; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">My Projects</span>
+      </div>
+      <div class="desktop-icon" data-app="about">
+        <div class="desktop-icon-img" style="background: #0078d4; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">About Me</span>
+      </div>
+      <div class="desktop-icon" data-app="contact">
+        <div class="desktop-icon-img" style="background: #5c2d91; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path
+              d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">Contact</span>
+      </div>
+      <div class="desktop-icon" data-app="skills">
+        <div class="desktop-icon-img" style="background: #107c10; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">Skills</span>
+      </div>
+      <div class="desktop-icon" data-app="resume">
+        <div class="desktop-icon-img" style="background: #2f2f2f; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">Resume</span>
+      </div>
+      <div class="desktop-icon" data-app="github">
+        <div class="desktop-icon-img" style="background: #333; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path
+              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">GitHub</span>
+      </div>
+      <div class="desktop-icon" data-app="chrome">
+        <div class="desktop-icon-img" style="background: #4285f4; border-radius: 8px;">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">Chrome</span>
+      </div>
+      <div class="desktop-icon" data-app="audiomack">
+        <div class="desktop-icon-img" style="background: #ffa200; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+          <svg viewBox="0 0 24 24" fill="black" style="width: 32px; height: 32px;">
+            <path d="M3 17h2v3H3zm4-5h2v8H7zm4-8h2v16h-2zm4 4h2v12h-2zm4-2h2v10h-2z" />
+          </svg>
+        </div>
+        <span class="desktop-icon-label">Audiomack</span>
+      </div>
+    </div>
+
+    <div class="snap-preview" id="snapPreview"></div>
+
+    <div class="start-menu" id="startMenu">
+      <div class="start-search">
+        <input type="text" class="start-search-input" id="startSearchInput"
+          placeholder="Search for apps, settings, and documents">
+      </div>
+      <div class="search-results" id="searchResults" style="display: none; padding: 8px 16px;"></div>
+      <div class="start-pinned">
+        <div class="start-section-title">Pinned</div>
+        <div class="start-apps-grid">
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #0078d4;">
+              <svg viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Edge</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #2f2f2f;">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path
+                  d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Explorer</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #f97316;">
+              <svg viewBox="0 0 24 24" fill="white">
+                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+              </svg>
+            </div>
+            <span class="start-app-name">VS Code</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #007acc;">
+              <svg viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm4.3 17.4l-5.4-5.4 1.4-1.4 4 4 7-7 1.4 1.4-8.4 9.4z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Terminal</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #2f2f2f;">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path
+                  d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 8h2v8H9zm4 0h2v8h-2z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Clock</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #f97316;">
+              <svg viewBox="0 0 24 24" fill="white">
+                <path
+                  d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Portfolio</span>
+          </div>
+          <div class="start-app">
+            <div class="start-app-icon" style="background: #ffa200;">
+              <svg viewBox="0 0 24 24" fill="black" style="width: 20px; height: 20px;">
+                <path d="M3 17h2v3H3zm4-5h2v8H7zm4-8h2v16h-2zm4 4h2v12h-2zm4-2h2v10h-2z" />
+              </svg>
+            </div>
+            <span class="start-app-name">Audiomack</span>
+          </div>
+        </div>
+      </div>
+      <div class="start-recommended">
+        <div class="start-section-title">Recommended</div>
+        <div class="recommended-grid">
+          <div class="recommended-item">
+            <div class="recommended-icon" style="background: #2f2f2f;">
+              <svg viewBox="0 0 24 24" fill="#fff">
+                <path
+                  d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+              </svg>
+            </div>
+            <div class="recommended-info">
+              <span class="recommended-name">Resume.pdf</span>
+              <span class="recommended-meta">2 days ago</span>
+            </div>
+          </div>
+          <div class="recommended-item">
+            <div class="recommended-icon" style="background: #1e1e1e;">
+              <svg viewBox="0 0 24 24" fill="#007acc">
+                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
+              </svg>
+            </div>
+            <div class="recommended-info">
+              <span class="recommended-name">Projects</span>
+              <span class="recommended-meta">Folder</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="start-footer">
+        <div class="user-account">
+          <div class="user-avatar-small">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+          </div>
+          <span class="user-name-small">Mercy</span>
+        </div>
+        <div style="position: relative;">
+          <div class="power-btn" id="powerBtn" title="Power">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
+            </svg>
+          </div>
+          <div class="power-menu" id="powerMenu">
+            <div class="power-menu-item" id="powerLock">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+              </svg>
+              <span>Lock</span>
+            </div>
+            <div class="power-menu-item" id="powerSleep">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M10 2c-1.82 0-3.53.5-5 1.35C7.99 5.08 10 8.3 10 12s-2.01 6.92-5 8.65C6.47 21.5 8.18 22 10 22c5.52 0 10-4.48 10-10S15.52 2 10 2z" />
+              </svg>
+              <span>Sleep</span>
+            </div>
+            <div class="power-menu-item" id="powerShutdown">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
+              </svg>
+              <span>Shut down</span>
+            </div>
+            <div class="power-menu-item" id="powerRestart">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
+              </svg>
+              <span>Restart</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="taskbar" id="taskbar">
+      <div class="taskbar-windows" id="taskbarWindows"></div>
+      <div class="taskbar-center">
+        <div class="taskbar-btn" id="startBtn" title="Start">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3h8v8H3V3zm0 10h8v8H3v-8zm10-10h8v8h-8V3zm0 10h8v8h-8v-8z" />
+          </svg>
+        </div>
+        <div class="search-pill" id="searchPill">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+          <span>Type here to search</span>
+        </div>
+      </div>
+      <div class="taskbar-right">
+        <div class="system-icons">
+          <div class="system-icon" id="wifiIcon" title="Wifi">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" />
+            </svg>
+          </div>
+          <div class="system-icon" id="batteryIcon" title="Battery">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z" />
+            </svg>
+            <span id="batteryPercent" style="color: #fff; font-size: 10px; margin-left: 2px;">85%</span>
+          </div>
+          <div class="system-icon" id="notificationIcon" title="Notifications">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="system-clock" id="systemClock">
+          <span class="clock-time" id="clockTime">10:42 AM</span>
+          <span class="clock-date" id="clockDate">5/14/2026</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-settings" id="quickSettings">
+      <div class="qs-header">
+        <h3>Quick Settings</h3>
+      </div>
+      <div class="qs-grid">
+        <div class="qs-tile active" id="wifiTile" onclick="toggleTile('wifi')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" />
+          </svg>
+          <span>WiFi</span>
+          <span class="qs-status">Available</span>
+        </div>
+        <div class="qs-tile" id="bluetoothTile" onclick="toggleTile('bluetooth')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z" />
+          </svg>
+          <span>Bluetooth</span>
+          <span class="qs-status">Not connected</span>
+        </div>
+        <div class="qs-tile" id="airplaneTile" onclick="toggleTile('airplane')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+          </svg>
+          <span>Airplane</span>
+          <span class="qs-status">Off</span>
+        </div>
+        <div class="qs-tile" id="saverTile" onclick="toggleTile('saver')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
+          </svg>
+          <span>Energy saver</span>
+          <span class="qs-status">Off</span>
+        </div>
+        <div class="qs-tile disabled" id="hotspotTile">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 11c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 2c0-3.31-2.69-6-6-6s-6 2.69-6 6c0 2.22 1.21 4.15 3 5.19l1-1.74c-1.19-.7-2-1.97-2-3.45 0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.48-.81 2.75-2 3.45l1 1.74c1.79-1.04 3-2.97 3-5.19zM12 3C6.48 3 2 7.48 2 13c0 3.7 2.01 6.92 4.99 8.65l1-1.73C5.61 18.53 4 15.96 4 13c0-4.42 3.58-8 8-8s8 3.58 8 8c0 2.96-1.61 5.53-4 6.92l1 1.73c2.99-1.73 5-4.95 5-8.65 0-5.52-4.48-10-10-10z" />
+          </svg>
+          <span>Mobile hotspot</span>
+          <span class="qs-status">Off</span>
+        </div>
+        <div class="qs-tile" id="nightlightTile" onclick="toggleTile('nightlight')">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M9 2c-1.05 0-2.05.16-3 .46 4.06 1.27 7 5.06 7 9.54 0 4.48-2.94 8.27-7 9.54.95.3 1.95.46 3 .46 5.52 0 10-4.48 10-10S14.52 2 9 2z" />
+          </svg>
+          <span>Night light</span>
+          <span class="qs-status">Off</span>
+        </div>
+      </div>
+      <div class="qs-slider-section">
+        <div class="qs-slider-label">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20 15.31L23.31 12 20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69zM12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
+          </svg>
+          <span>Brightness</span>
+        </div>
+        <input type="range" class="qs-slider" id="brightnessSlider" min="0" max="100" value="80">
+      </div>
+      <div class="qs-slider-section">
+        <div class="qs-slider-label">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+          </svg>
+          <span>Volume</span>
+        </div>
+        <input type="range" class="qs-slider" id="volumeSlider" min="0" max="100" value="50">
+      </div>
+      <div class="qs-footer">
+        <div class="qs-battery">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z" />
+          </svg>
+          <span id="qsBatteryPercent">85%</span>
+        </div>
+        <div class="qs-settings" onclick="openSettings()" style="cursor: pointer;">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-sidebar">
+      <div class="settings-logo">
+        <svg viewBox="0 0 24 24" fill="#fff" width="24" height="24">
+          <path
+            d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58z" />
+        </svg>
+        <span>Settings</span>
+      </div>
+      <div class="settings-nav">
+        <div class="settings-nav-item active" data-section="system" onclick="showSettingsSection('system')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z" />
+          </svg>
+          <span>System</span>
+        </div>
+        <div class="settings-nav-item" data-section="bluetooth" onclick="showSettingsSection('bluetooth')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29z" />
+          </svg>
+          <span>Bluetooth & devices</span>
+        </div>
+        <div class="settings-nav-item" data-section="network" onclick="showSettingsSection('network')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" />
+          </svg>
+          <span>Network & internet</span>
+        </div>
+        <div class="settings-nav-item" data-section="personalization" onclick="showSettingsSection('personalization')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z" />
+          </svg>
+          <span>Personalization</span>
+        </div>
+        <div class="settings-nav-item" data-section="apps" onclick="showSettingsSection('apps')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
+          </svg>
+          <span>Apps</span>
+        </div>
+        <div class="settings-nav-item" data-section="account" onclick="showSettingsSection('account')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
+          <span>Accounts</span>
+        </div>
+        <div class="settings-nav-item" data-section="time" onclick="showSettingsSection('time')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+          </svg>
+          <span>Time & language</span>
+        </div>
+        <div class="settings-nav-item" data-section="gaming" onclick="showSettingsSection('gaming')">
+          <svg viewBox="0 0 24 24" fill="#fff">
+            <path
+              d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+          </svg>
+          <span>Gaming</span>
+        </div>
+      </div>
+    </div>
+    <div class="settings-content" id="settingsContent">
+    </div>
+  </div>
+
+  <div class="context-menu" id="contextMenu">
+    <div class="context-menu-item" data-action="view">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
+      </svg>
+      View
+    </div>
+    <div class="context-menu-item" data-action="sort">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" />
+      </svg>
+      Sort by
+    </div>
+    <div class="context-menu-item" data-action="refresh">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+      </svg>
+      Refresh
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" data-action="new">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+      </svg>
+      New
+    </div>
+    <div class="context-menu-item" data-action="personalize">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+      </svg>
+      Personalize
+    </div>
+  </div>
+
+  <script>
+    function updateLockTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('lockTime').textContent = `${hours}:${minutes}`;
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      document.getElementById('lockDate').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+    }
+
+    function updateSystemClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      document.getElementById('clockTime').textContent = `${hours}:${minutes} ${ampm}`;
+      document.getElementById('clockDate').textContent = `${now.getMonth() + 1}/${now.getDate()}/${now.getFullYear()}`;
+    }
+
+    updateLockTime();
+    updateSystemClock();
+    setInterval(updateLockTime, 1000);
+    setInterval(updateSystemClock, 1000);
+
+    let stopwatchInterval = null;
+    let stopwatchSeconds = 0;
+
+    window.startStopwatch = function () {
+      if (!stopwatchInterval) {
+        stopwatchInterval = setInterval(() => {
+          stopwatchSeconds++;
+          updateStopwatchDisplay();
+        }, 1000);
+      }
+    };
+
+    window.stopStopwatch = function () {
+      if (stopwatchInterval) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+      }
+    };
+
+    window.resetStopwatch = function () {
+      stopStopwatch();
+      stopwatchSeconds = 0;
+      updateStopwatchDisplay();
+    };
+
+    function updateStopwatchDisplay() {
+      const hours = Math.floor(stopwatchSeconds / 3600);
+      const minutes = Math.floor((stopwatchSeconds % 3600) / 60);
+      const seconds = stopwatchSeconds % 60;
+      const display = document.getElementById('stopwatchDisplay');
+      if (display) {
+        display.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      }
+    }
+
+    setInterval(() => {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      const timeStr = `${hours}:${minutes} ${ampm}`;
+
+      const appClockTime = document.getElementById('appClockTime');
+      if (appClockTime) {
+        appClockTime.textContent = timeStr;
+      }
+
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+      const appClockDate = document.getElementById('appClockDate');
+      if (appClockDate) {
+        appClockDate.textContent = dateStr;
+      }
+    }, 1000);
+
+    const lockScreen = document.getElementById('lockScreen');
+    const loginScreen = document.getElementById('loginScreen');
+    const desktop = document.getElementById('desktop');
+    const signInBtn = document.getElementById('signInBtn');
+    const startBtn = document.getElementById('startBtn');
+    const startMenu = document.getElementById('startMenu');
+    const contextMenu = document.getElementById('contextMenu');
+    const snapPreview = document.getElementById('snapPreview');
+    const taskbarWindows = document.getElementById('taskbarWindows');
+
+    let isLocked = true;
+    let zIndexCounter = 1000;
+    let openWindows = {};
+    let selectedDesktopIcon = null;
+
+    function unlockScreen() {
+      if (!isLocked) return;
+      isLocked = false;
+      lockScreen.classList.add('unlocking');
+      setTimeout(() => loginScreen.classList.add('visible'), 400);
+    }
+
+    lockScreen.addEventListener('click', unlockScreen);
+    document.addEventListener('keydown', (e) => { if (isLocked) unlockScreen(); });
+
+    signInBtn.addEventListener('click', () => {
+      loginScreen.classList.add('entering-desktop');
+      setTimeout(() => {
+        loginScreen.classList.remove('visible', 'entering-desktop');
+        desktop.classList.add('visible');
+      }, 600);
+    });
+
+    startBtn.addEventListener('click', () => {
+      startMenu.classList.toggle('visible');
+      startBtn.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.start-app').forEach(app => {
+      app.addEventListener('click', () => {
+        const appName = app.querySelector('.start-app-name').textContent;
+        const appMap = {
+          'Edge': 'edge',
+          'Explorer': 'explorer',
+          'VS Code': 'vscode',
+          'Terminal': 'terminal',
+          'Clock': 'clock',
+          'Portfolio': 'portfolio',
+          'Audiomack': 'audiomack'
+        };
+        const appKey = appMap[appName];
+        if (appKey && appContents[appKey]) {
+          openAppWindow(appKey);
+          startMenu.classList.remove('visible');
+          startBtn.classList.remove('active');
+        }
+      });
+    });
+
+    desktop.addEventListener('click', (e) => {
+      if (!startMenu.contains(e.target) && e.target !== startBtn && !startBtn.contains(e.target)) {
+        startMenu.classList.remove('visible');
+        startBtn.classList.remove('active');
+      }
+    });
+
+    document.getElementById('searchPill').addEventListener('click', () => {
+      startMenu.classList.add('visible');
+      startBtn.classList.add('active');
+      document.getElementById('startSearchInput').focus();
+    });
+
+    const searchItems = [
+      { name: 'My Projects', app: 'projects', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>', color: '#f97316' },
+      { name: 'About Me', app: 'about', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>', color: '#0078d4' },
+      { name: 'Contact', app: 'contact', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>', color: '#5c2d91' },
+      { name: 'Skills', app: 'skills', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>', color: '#107c10' },
+      { name: 'Resume', app: 'resume', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>', color: '#2f2f2f' },
+      { name: 'GitHub', app: 'github', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>', color: '#333' },
+      { name: 'Edge', app: 'edge', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg>', color: '#0078d4' },
+      { name: 'Explorer', app: 'explorer', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>', color: '#2f2f2f' },
+      { name: 'VS Code', app: 'vscode', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm4.3 17.4l-5.4-5.4 1.4-1.4 4 4 7-7 1.4 1.4-8.4 9.4z"/></svg>', color: '#007acc' },
+      { name: 'Terminal', app: 'terminal', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>', color: '#2f2f2f' },
+      { name: 'Clock', app: 'clock', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>', color: '#f97316' },
+      { name: 'Portfolio', app: 'portfolio', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z"/></svg>', color: '#f97316' },
+      { name: 'LEVEL-1 PROJECT', url: 'LEVEL-1 PROJECT/index.html', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>', color: '#f97316' },
+      { name: 'IMAGES', url: 'IMAGES', icon: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>', color: '#0078d4' },
+      { name: 'Audiomack', app: 'audiomack', icon: '<svg viewBox="0 0 24 24" fill="black"><path d="M3 17h2v3H3zm4-5h2v8H7zm4-8h2v16h-2zm4 4h2v12h-2zm4-2h2v10h-2z"/></svg>', color: '#ffa200' }
+    ];
+
+    document.getElementById('startSearchInput').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const searchResults = document.getElementById('searchResults');
+
+      if (query.length === 0) {
+        searchResults.style.display = 'none';
+        return;
+      }
+
+      const matches = searchItems.filter(item =>
+        item.name.toLowerCase().includes(query)
+      );
+
+      if (matches.length > 0) {
+        searchResults.innerHTML = matches.map(item => `
+          <div class="search-result-item" style="display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'" onclick="handleSearchClick('${item.app || ''}', '${item.url || ''}')">
+            <div style="width: 36px; height: 36px; background: ${item.color}; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              ${item.icon}
+            </div>
+            <span style="color: var(--text); font-size: 14px;">${item.name}</span>
+          </div>
+        `).join('');
+        searchResults.style.display = 'block';
+      } else {
+        searchResults.innerHTML = '<div style="color: var(--text-muted); padding: 10px; font-size: 13px;">No results found</div>';
+        searchResults.style.display = 'block';
+      }
+    });
+
+    window.handleSearchClick = function (app, url) {
+      if (app) {
+        openAppWindow(app);
+      } else if (url) {
+        window.open(url, '_blank');
+      }
+      startMenu.classList.remove('visible');
+      startBtn.classList.remove('active');
+      document.getElementById('startSearchInput').value = '';
+      document.getElementById('searchResults').style.display = 'none';
+    };
+
+    const quickSettings = document.getElementById('quickSettings');
+    const wifiIcon = document.getElementById('wifiIcon');
+    const batteryIcon = document.getElementById('batteryIcon');
+    const notificationIcon = document.getElementById('notificationIcon');
+
+    let state = {
+      wifi: true,
+      bluetooth: false,
+      airplane: false,
+      saver: false,
+      nightlight: false,
+      brightness: 80,
+      volume: 50
+    };
+
+    function updateQuickSettingsUI() {
+      document.getElementById('wifiTile').classList.toggle('active', state.wifi);
+      document.getElementById('wifiTile').querySelector('.qs-status').textContent = state.wifi ? 'Connected' : 'Available';
+
+      document.getElementById('bluetoothTile').classList.toggle('active', state.bluetooth);
+      document.getElementById('bluetoothTile').querySelector('.qs-status').textContent = state.bluetooth ? 'Connected' : 'Not connected';
+
+      document.getElementById('airplaneTile').classList.toggle('active', state.airplane);
+      document.getElementById('airplaneTile').querySelector('.qs-status').textContent = state.airplane ? 'On' : 'Off';
+
+      document.getElementById('saverTile').classList.toggle('active', state.saver);
+      document.getElementById('saverTile').querySelector('.qs-status').textContent = state.saver ? 'On' : 'Off';
+
+      document.getElementById('nightlightTile').classList.toggle('active', state.nightlight);
+      document.getElementById('nightlightTile').querySelector('.qs-status').textContent = state.nightlight ? 'On' : 'Off';
+
+      document.getElementById('brightnessSlider').value = state.brightness;
+      document.getElementById('volumeSlider').value = state.volume;
+
+      applySettings();
+    }
+
+    function applySettings() {
+      document.getElementById('nightlightOverlay').style.display = state.nightlight ? 'block' : 'none';
+
+      const desktop = document.getElementById('desktop');
+      if (desktop) {
+        desktop.style.filter = `brightness(${state.brightness}%)`;
+      }
+
+      document.getElementById('wifiIcon').style.opacity = state.airplane ? '0.4' : '1';
+      document.getElementById('wifiIcon').style.pointerEvents = state.airplane ? 'none' : 'auto';
+
+      if (state.saver) {
+        document.body.classList.add('energy-saver');
+      } else {
+        document.body.classList.remove('energy-saver');
+      }
+
+      const wifiSvg = document.getElementById('wifiIcon').querySelector('svg path');
+      if (wifiSvg) {
+        if (!state.wifi || state.airplane) {
+          wifiSvg.style.opacity = '0.4';
+        } else {
+          wifiSvg.style.opacity = '1';
+        }
+      }
+    }
+
+    function toggleQuickSettings(e) {
+      e.stopPropagation();
+      quickSettings.classList.toggle('visible');
+    }
+
+    wifiIcon.addEventListener('click', toggleQuickSettings);
+    batteryIcon.addEventListener('click', toggleQuickSettings);
+    notificationIcon.addEventListener('click', toggleQuickSettings);
+
+    document.addEventListener('click', (e) => {
+      if (!quickSettings.contains(e.target) && !e.target.closest('.system-icon')) {
+        quickSettings.classList.remove('visible');
+      }
+    });
+
+    window.toggleTile = function (tile) {
+      const tileElement = document.getElementById(tile + 'Tile');
+      if (tileElement && !tileElement.classList.contains('disabled')) {
+        state[tile] = !state[tile];
+
+        if (tile === 'airplane') {
+          if (state.airplane) {
+            state.wifi = false;
+            state.bluetooth = false;
+          }
+        }
+
+        updateQuickSettingsUI();
+      }
+    };
+
+    document.getElementById('brightnessSlider').addEventListener('input', (e) => {
+      state.brightness = parseInt(e.target.value);
+      applySettings();
+    });
+
+    document.getElementById('volumeSlider').addEventListener('input', (e) => {
+      updateSystemVolume(e.target.value);
+    });
+
+    let batteryLevel = 85;
+    setInterval(() => {
+      if (!state.saver) {
+        batteryLevel = batteryLevel > 15 ? batteryLevel - 1 : 85;
+      } else {
+        batteryLevel = batteryLevel > 10 ? batteryLevel - 1 : 10;
+      }
+      document.getElementById('batteryPercent').textContent = batteryLevel + '%';
+      document.getElementById('qsBatteryPercent').textContent = batteryLevel + '%';
+
+      const batteryIconPath = document.querySelector('#batteryIcon svg path');
+      if (batteryLevel <= 20 && batteryIconPath) {
+        batteryIconPath.style.fill = '#ff5f56';
+      } else if (batteryIconPath) {
+        batteryIconPath.style.fill = '';
+      }
+    }, 60000);
+
+    updateQuickSettingsUI();
+
+    const settingsPanel = document.getElementById('settingsPanel');
+
+    window.openSettings = function () {
+      quickSettings.classList.remove('visible');
+      settingsPanel.classList.add('visible');
+      showSettingsSection('system');
+    };
+
+    window.showSettingsSection = function (section) {
+      document.querySelectorAll('.settings-nav-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.section === section) {
+          item.classList.add('active');
+        }
+      });
+
+      const content = document.getElementById('settingsContent');
+
+      const sections = {
+        system: `
+          <h2 class="settings-section-title">System</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Display</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Brightness</div>
+                <div class="settings-item-desc">Adjust the brightness of your screen</div>
+              </div>
+              <div class="settings-slider-container" style="width: 200px;">
+                <input type="range" class="settings-slider" value="${state.brightness}" onchange="updateBrightness(this.value)">
+              </div>
+            </div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Night light</div>
+                <div class="settings-item-desc">Reduce blue light in the evening</div>
+              </div>
+              <div class="settings-toggle ${state.nightlight ? 'active' : ''}" onclick="toggleSetting('nightlight', this)"></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Sound</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Volume</div>
+                <div class="settings-item-desc">Master volume level</div>
+              </div>
+              <div class="settings-slider-container" style="width: 200px;">
+                <input type="range" class="settings-slider" value="${state.volume}" onchange="updateVolume(this.value)">
+              </div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Battery</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Battery saver</div>
+                <div class="settings-item-desc">Extend battery life by limiting background activity</div>
+              </div>
+              <div class="settings-toggle ${state.saver ? 'active' : ''}" onclick="toggleSetting('saver', this)"></div>
+            </div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Battery level</div>
+                <div class="settings-item-desc">${batteryLevel}%</div>
+              </div>
+            </div>
+          </div>
+        `,
+        bluetooth: `
+          <h2 class="settings-section-title">Bluetooth & devices</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Bluetooth</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Bluetooth</div>
+                <div class="settings-item-desc">Connect to nearby devices</div>
+              </div>
+              <div class="settings-toggle ${state.bluetooth ? 'active' : ''}" onclick="toggleSetting('bluetooth', this)"></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Connected devices</div>
+            <div style="color: #888; font-size: 13px; padding: 20px; text-align: center;">No devices connected</div>
+          </div>
+        `,
+        network: `
+          <h2 class="settings-section-title">Network & internet</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">WiFi</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">WiFi</div>
+                <div class="settings-item-desc">Connect to wireless networks</div>
+              </div>
+              <div class="settings-toggle ${state.wifi ? 'active' : ''}" onclick="toggleSetting('wifi', this)"></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Airplane mode</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Airplane mode</div>
+                <div class="settings-item-desc">Turn off all wireless connections</div>
+              </div>
+              <div class="settings-toggle ${state.airplane ? 'active' : ''}" onclick="toggleSetting('airplane', this)"></div>
+            </div>
+          </div>
+        `,
+        personalization: `
+          <h2 class="settings-section-title">Personalization</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Colors</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Accent color</div>
+                <div class="settings-item-desc">Choose your accent color</div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <div style="width: 32px; height: 32px; background: #f97316; border-radius: 4px; cursor: pointer; border: 2px solid #fff;"></div>
+                <div style="width: 32px; height: 32px; background: #0078d4; border-radius: 4px; cursor: pointer;"></div>
+                <div style="width: 32px; height: 32px; background: #107c10; border-radius: 4px; cursor: pointer;"></div>
+                <div style="width: 32px; height: 32px; background: #5c2d91; border-radius: 4px; cursor: pointer;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Themes</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Dark mode</div>
+                <div class="settings-item-desc">Use dark theme</div>
+              </div>
+              <div class="settings-toggle active"></div>
+            </div>
+          </div>
+        `,
+        apps: `
+          <h2 class="settings-section-title">Apps</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Installed apps</div>
+            <div style="color: #888; font-size: 13px; padding: 20px; text-align: center;">My Projects, About Me, Contact, Skills, Resume, GitHub</div>
+          </div>
+        `,
+        account: `
+          <h2 class="settings-section-title">Accounts</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Your info</div>
+            <div class="settings-item">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: #fff; font-size: 24px; font-weight: 600;">IM</span>
+                </div>
+                <div>
+                  <div class="settings-item-label" style="font-size: 16px;">Ojedapo Ibukunoluwa Mercy</div>
+                  <div class="settings-item-desc">Full Stack Developer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        time: `
+          <h2 class="settings-section-title">Time & language</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Date and time</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Set time automatically</div>
+                <div class="settings-item-desc">Use network time</div>
+              </div>
+              <div class="settings-toggle active"></div>
+            </div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Set date automatically</div>
+                <div class="settings-item-desc">Use network date</div>
+              </div>
+              <div class="settings-toggle active"></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Language</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Display language</div>
+                <div class="settings-item-desc">English (Nigeria)</div>
+              </div>
+            </div>
+          </div>
+        `,
+        gaming: `
+          <h2 class="settings-section-title">Gaming</h2>
+          <div class="settings-group">
+            <div class="settings-group-title">Gaming features</div>
+            <div class="settings-item">
+              <div>
+                <div class="settings-item-label">Game mode</div>
+                <div class="settings-item-desc">Optimize for gaming</div>
+              </div>
+              <div class="settings-toggle"></div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <div class="settings-group-title">Xbox</div>
+            <div style="color: #888; font-size: 13px; padding: 20px; text-align: center;">Sign in to Xbox for gaming features</div>
+          </div>
+        `
+      };
+
+      content.innerHTML = sections[section] || '<div style="color: #888;">Select a category</div>';
+    };
+
+    window.toggleSetting = function (setting, element) {
+      state[setting] = !state[setting];
+      element.classList.toggle('active');
+      updateQuickSettingsUI();
+    };
+
+    window.updateBrightness = function (value) {
+      state.brightness = parseInt(value);
+      document.getElementById('brightnessSlider').value = value;
+      applySettings();
+    };
+
+    window.updateSystemVolume = function (value) {
+      const vol = parseInt(value);
+      state.volume = vol;
+      const qsSlider = document.getElementById('volumeSlider');
+      if (qsSlider) qsSlider.value = vol;
+      
+      const settingsSliders = document.querySelectorAll('.settings-slider');
+      settingsSliders.forEach(slider => {
+        if (slider.getAttribute('onchange') && slider.getAttribute('onchange').includes('updateVolume')) {
+          slider.value = vol;
+        }
+      });
+      
+      const audioEl = document.getElementById('audiomack-audio');
+      if (audioEl) {
+        audioEl.volume = vol / 100;
+      }
+      
+      const appVolumeSlider = document.getElementById('audiomack-volume');
+      if (appVolumeSlider) {
+        appVolumeSlider.value = vol;
+      }
+    };
+
+    window.updateVolume = function (value) {
+      updateSystemVolume(value);
+    };
+
+    settingsPanel.addEventListener('click', (e) => {
+      if (e.target === settingsPanel) {
+        settingsPanel.classList.remove('visible');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && !e.target.closest('.qs-settings')) {
+        settingsPanel.classList.remove('visible');
+      }
+    });
+
+    document.querySelectorAll('.desktop-icon').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        icon.classList.add('selected');
+        selectedDesktopIcon = icon;
+
+        const app = icon.dataset.app;
+        if (app === 'chrome') {
+          window.open('https://www.google.com', '_blank');
+        } else {
+          openAppWindow(app);
+        }
+      });
+    });
+
+    desktop.addEventListener('click', (e) => {
+      if (e.target === desktop || e.target === desktop.querySelector('.desktop-icons') || e.target.classList.contains('desktop-icon-img') || e.target.classList.contains('desktop-icon-label')) {
+        document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+        selectedDesktopIcon = null;
+      }
+    });
+
+    desktop.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target === desktop || e.target.closest('.desktop-icons') || e.target.closest('.snap-preview')) {
+        contextMenu.style.left = `${e.clientX}px`;
+        contextMenu.style.top = `${e.clientY}px`;
+        contextMenu.classList.add('visible');
+      }
+    });
+
+    document.addEventListener('click', () => contextMenu.classList.remove('visible'));
+
+    const appContents = {
+      projects: `
+        <div style="padding: 20px; color: var(--text); overflow-y: auto; max-height: 100%;">
+          <h2 style="margin-bottom: 6px;">My Projects</h2>
+          <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Click any project to open it in a new tab</p>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://leveloneproject-nu.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #00a859, #00d46a); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Cowrywise Clone</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Financial planning &amp; investment platform</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://area-of-shapes-pi.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #7c3aed, #9f5bfc); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Area of Shapes</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Calculate area of geometric shapes</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://calculator-lime-sigma.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #dc2626, #f87171); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H8v-2h4v2zm0-4H8v-2h4v2zm4 4h-2v-2h2v2zm0-4h-2v-2h2v2zm1-6H7V5h10v2z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Calculator</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Fully functional web calculator</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://character-converter.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #0891b2, #22d3ee); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M2.5 4v3h5v12h3V7h5V4h-13zm19 5h-9v3h3v7h3v-7h3V9z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Character Counter</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Count characters &amp; words in real-time</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://discount-calculator-rouge.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #d97706, #fbbf24); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M12.79 21L3 11.21v2c0 .53.21 1.04.59 1.41l7.79 7.79c.78.78 2.05.78 2.83 0l6.21-6.21c.78-.78.78-2.05 0-2.83L12.79 21zM11.38 17.41L3.59 9.62C3.21 9.25 3 8.74 3 8.21V4c0-1.1.9-2 2-2h4.21c.53 0 1.04.21 1.41.59l7.79 7.79c.78.78.78 2.05 0 2.83l-4.21 4.21c-.78.77-2.05.77-2.82-.01zM7 8c.55 0 1-.45 1-1s-.45-1-1-1-1 .45-1 1 .45 1 1 1z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Discount Calculator</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Calculate discounts &amp; final prices</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://logic-operation-table.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #059669, #34d399); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M3 3v18h18V3H3zm8 16H5v-6h6v6zm0-8H5V5h6v6zm8 8h-6v-6h6v6zm0-8h-6V5h6v6z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Nested Loop Table</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Dynamic table via nested loops</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://score-checker-blush.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #be185d, #f472b6); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Score Checker</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Grade system &amp; score evaluation</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://cart-list-rust.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #ea580c, #fb923c); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96C5 16.1 6.1 17 7 17h14v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63H19c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0023.45 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Shopping List</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Interactive cart &amp; shopping list app</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://unit-converter-delta-flax.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #0369a1, #38bdf8); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M7.01 17H2v2h5.01v3L11 18l-3.99-4v3zm9.98-2H22v-2h-5.01V10L13 14l3.99 4v-3z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Unit Converter</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Convert units across multiple categories</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('https://projectcowrywise.vercel.app/', '_blank')">
+              <div style="background: linear-gradient(135deg, #047857, #10b981); width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+                <svg width="26" height="26" fill="white" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+              </div>
+              <h3 style="margin-bottom: 8px; font-size: 14px;">Project Cowrywise</h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 12px;">Full-featured Cowrywise financial web app with save, invest &amp; more</p>
+              <span style="background: var(--accent); color: white; padding: 5px 10px; border-radius: 4px; font-size: 11px;">Open Website ↗</span>
+            </div>
+
+          </div>
+        </div>`,
+      about: `
+        <div style="padding: 20px; color: var(--text);">
+          <h2 style="margin-bottom: 20px; color: var(--accent);">About Me</h2>
+          
+          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+            <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 18px;">Who I Am</h3>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 14px;">
+              I'm Ibukunoluwa — a full stack web developer who finds genuine joy in the craft of building things for the web. From architecting robust backends to designing seamless user experiences on the frontend, I thrive in the full lifecycle of a product. I'm a quiet thinker and proud introvert, which means I do my best work in deep focus — the kind where hours pass unnoticed because the problem is just that interesting.
+            </p>
+          </div>
+
+          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+            <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 18px;">What Drives Me</h3>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 14px;">
+              Innovation isn't just a buzzword for me — it's how I approach every project. I'm constantly asking "how can this be better?" Whether it's optimizing a query, refactoring messy logic, or rethinking a UI flow entirely, I care about building things that last and things that matter. I believe clean code is a form of respect — for yourself and for everyone who reads it after you.
+            </p>
+          </div>
+
+          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+            <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 18px;">Beyond the Screen</h3>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 14px;">
+              When I step away from the keyboard — briefly — you'll likely find me in the kitchen. Cooking is my other creative outlet; I approach a recipe the same way I approach a feature: with intention, patience, and a willingness to improvise. Both require getting the details right, and both are deeply satisfying when they come together.
+            </p>
+          </div>
+
+          <div style="background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.2); padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+            <h3 style="color: var(--accent); margin-bottom: 12px; font-size: 18px;">Hobbies</h3>
+            <p style="color: var(--text-muted); line-height: 1.7; font-size: 14px;">
+              <strong>Innovator</strong>, <strong>Home cook</strong>, <strong>Introvert</strong>
+            </p>
+          </div>
+
+          <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.1)); border: 1px solid rgba(249, 115, 22, 0.3); padding: 20px; border-radius: 12px;">
+            <p style="color: var(--text); line-height: 1.7; font-size: 14px; font-style: italic;">
+              "I don't just write code — I build experiences. Every line is intentional, every component considered. Quietly persistent, endlessly curious."
+            </p>
+          </div>
+        </div>`,
+      contact: `
+        <div style="padding: 24px; color: var(--text); background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(251, 146, 60, 0.02) 100%); border-radius: 16px;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <h2 style="margin-bottom: 12px; color: var(--accent); font-size: 28px; font-weight: 600;">Let's Connect</h2>
+            <p style="color: var(--text-muted); line-height: 1.6; font-size: 14px; max-width: 500px; margin: 0 auto;">
+              I'm always open to new opportunities, collaborations, and conversations. Whether you have a project in mind, a role to fill, or just want to connect — feel free to reach out!
+            </p>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(249, 115, 22, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="background: linear-gradient(135deg, #f97316, #fb923c); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4); flex-shrink: 0;">
+                  <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                </div>
+                <div>
+                  <p style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Location</p>
+                  <p style="font-size: 15px; color: var(--text); font-weight: 500;">Oyo, Nigeria</p>
+                </div>
+              </div>
+            </div>
+
+            <a href="mailto:ibukunojedapo2022@gmail.com" style="text-decoration: none; display: block;">
+              <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(249, 115, 22, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div style="background: linear-gradient(135deg, #f97316, #fb923c); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4); flex-shrink: 0;">
+                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                  </div>
+                  <div>
+                    <p style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Email</p>
+                    <p style="font-size: 15px; color: var(--text); font-weight: 500;">ibukunojedapo2022@gmail.com</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://github.com/Ibukunoluwa-Mercy" target="_blank" style="text-decoration: none; display: block;">
+              <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(249, 115, 22, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div style="background: linear-gradient(135deg, #333, #555); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); flex-shrink: 0;">
+                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                  </div>
+                  <div>
+                    <p style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">GitHub</p>
+                    <p style="font-size: 15px; color: var(--accent); font-weight: 500;">github.com/Ibukunoluwa-Mercy</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://linkedin.com/in/ibukunoluwa-mercy" target="_blank" style="text-decoration: none; display: block;">
+              <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(249, 115, 22, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div style="background: linear-gradient(135deg, #0077b5, #00a0dc); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0, 119, 181, 0.4); flex-shrink: 0;">
+                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </div>
+                  <div>
+                    <p style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">LinkedIn</p>
+                    <p style="font-size: 15px; color: var(--accent); font-weight: 500;">linkedin.com/in/ibukunoluwa-mercy</p>
+                  </div>
+                </div>
+              </div>
+            </a>
+
+            <a href="https://wa.me/2349025220892" target="_blank" style="text-decoration: none; display: block;">
+              <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(249, 115, 22, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                  <div style="background: linear-gradient(135deg, #25D366, #20BD5A); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4); flex-shrink: 0;">
+                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.195.194 1.613.073.417-.122.75-.372.939-.621.188-.249.437-.374.664-.39.227-.015.391-.04.554-.065.175-.027.543.003.793.039.249.036.495.018.711-.072.216-.09.384-.201.549-.304.165-.103.34-.227.469-.348.13-.12.228-.235.313-.361.085-.126.127-.21.176-.317.05-.107.025-.19-.013-.27-.038-.083-.347-.829-.347-.829-.174-.299-.299-.523-.432-.607-.134-.084-.29-.097-.401-.05-.111.047-.341.134-.521.241-.18.107-.307.239-.342.268-.034.029-.029.174-.007.249.022.074.094.174.202.299.109.124.229.256.344.384.115.127.19.223.254.307.064.084.054.15.038.23-.016.079-.07.187-.196.293-.126.105-.242.174-.363.237-.121.063-.267.108-.423.164-.156.056-.303.093-.438.119-.135.026-.267.019-.385-.008-.118-.027-.247-.073-.38-.138-.134-.065-.261-.14-.392-.223l-.066-.04c-.109-.073-.206-.133-.295-.177-.088-.044-.182-.068-.27-.058-.089.01-.178.051-.27.122l-.034.026c-.063.058-.131.137-.182.229-.052.092-.092.2-.112.327-.02.127-.004.273.03.43.034.157.092.333.181.52.089.188.207.412.37.67l.044.06c.083.118.19.27.32.451.132.182.27.39.41.614.141.224.297.475.466.748.17.273.34.582.48.921.14.339.233.711.28 1.103.047.393.015.794-.046 1.181-.061.387-.17.77-.338 1.136-.168.366-.405.656-.714.859-.309.203-.648.335-1.006.394-.358.059-.727.042-1.086.013-.359-.029-.706-.101-1.084-.223-.379-.121-.765-.304-1.136-.538-.37-.234-.742-.52-1.098-.859-.355-.339-.682-.71-.977-1.108-.295-.398-.561-.82-.796-1.255-.235-.435-.427-.89-.574-1.35-.147-.46-.236-.93-.266-1.397-.03-.467-.002-.93.08-1.38.082-.449.223-.88.42-1.28.196-.399.442-.77.731-1.103.29-.333.625-.627.996-.873.37-.247.77-.46 1.19-.636.42-.176.864-.312 1.318-.404.454-.092.912-.142 1.365-.15.453-.007.9-.002 1.334.013.435.015.858.047 1.266.095.408.048.8.114 1.167.197.367.083.712.19 1.025.321.313.13.595.282.839.456.244.174.457.377.635.607.178.23.324.482.436.748.112.267.182.545.208.826.025.281.009.56-.047.829-.057.269-.142.528-.254.77-.113.242-.252.462-.414.655-.162.193-.345.362-.546.504-.2.142-.42.261-.653.354-.233.093-.476.163-.722.209-.246.046-.502.07-.76.07h-.01z"/></svg>
+                </div>
+                <div>
+                  <p style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">WhatsApp</p>
+                  <p style="font-size: 15px; color: var(--text); font-weight: 500;">+234 902 522 0892</p>
+                </div>
+              </div>
+            </div>
+            </a>
+
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 20px; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+              <div style="text-align: center;">
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">I'd love to hear from you!</p>
+                <button style="background: linear-gradient(135deg, #f97316, #fb923c); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Send a Message</button>
+              </div>
+            </div>
+          </div>
+        </div>`,
+      skills: `
+        <div style="padding: 20px; color: var(--text);">
+          <h2 style="margin-bottom: 16px;">Skills</h2>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>HTML</span><span>95%</span></div><div style="height: 8px; background: var(--surface-3); border-radius: 4px;"><div style="width: 95%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); border-radius: 4px;"></div></div></div>
+            <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>CSS</span><span>90%</span></div><div style="height: 8px; background: var(--surface-3); border-radius: 4px;"><div style="width: 90%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); border-radius: 4px;"></div></div></div>
+            <div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>JavaScript</span><span>85%</span></div><div style="height: 8px; background: var(--surface-3); border-radius: 4px;"><div style="width: 85%; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-hover)); border-radius: 4px;"></div></div></div>
+          </div>
+        </div>`,
+      resume: `
+        <div style="padding: 20px; color: var(--text);">
+          <h2 style="margin-bottom: 16px;">Resume</h2>
+          <div style="background: var(--surface-2); padding: 20px; border-radius: 8px;">
+            <h3 style="margin-bottom: 8px;">Experience</h3>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">Senior Developer at Tech Corp (2021-Present)</p>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">Full Stack Developer at Startup Inc (2019-2021)</p>
+            <h3 style="margin-bottom: 8px;">Education</h3>
+            <p style="color: var(--text-muted);">BS Computer Science, University of California</p>
+          </div>
+        </div>`,
+      github: `
+        <div style="padding: 20px; color: var(--text);">
+          <h2 style="margin-bottom: 16px;">My Repositories</h2>
+          <p style="color: var(--text); font-size: 14px; margin-bottom: 16px;">github.com/Ibukunoluwa-Mercy</p>
+          <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 20px;">Welcome to my GitHub — the place where my ideas take shape as code. Each repository here tells a story: a problem I wanted to solve, a concept I wanted to explore, or a skill I was sharpening. I build across the full stack, so you'll find everything from backend logic and REST APIs to polished, responsive frontends.</p>
+          <p style="color: var(--text-muted); line-height: 1.7; margin-bottom: 24px;">Feel free to browse, clone, fork, or star anything that catches your eye. If something sparks a question or a collaboration idea, don't hesitate to reach out — I'm always open to connecting with fellow developers and builders.</p>
+          
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 16px; border-radius: 12px;">
+              <p style="font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px;">Frontend</p>
+              <p style="font-size: 12px; color: var(--text-muted);">UI & web interfaces</p>
+            </div>
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 16px; border-radius: 12px;">
+              <p style="font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px;">Backend</p>
+              <p style="font-size: 12px; color: var(--text-muted);">APIs & server logic</p>
+            </div>
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 16px; border-radius: 12px;">
+              <p style="font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px;">Full Stack</p>
+              <p style="font-size: 12px; color: var(--text-muted);">End-to-end projects</p>
+            </div>
+            <div style="background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(249, 115, 22, 0.05) 100%); border: 1px solid rgba(249, 115, 22, 0.25); padding: 16px; border-radius: 12px;">
+              <p style="font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 4px;">Experiments</p>
+              <p style="font-size: 12px; color: var(--text-muted);">Ideas in progress</p>
+            </div>
+          </div>
+          
+          <a href="https://github.com/Ibukunoluwa-Mercy?tab=repositories" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #f97316, #fb923c); color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; font-weight: 600; text-decoration: none; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Browse all repositories</a>
+          
+          <p style="color: var(--text-muted); font-style: italic; margin-top: 20px; font-size: 13px;">"Every project in here started as a blank file and a question. I hope something here sparks the same curiosity in you."</p>
+          <p style="color: var(--text); font-size: 12px; margin-top: 8px;">— Ojedapo Ibukunoluwa Mercy</p>
+        </div>`,
+      edge: `
+        <div style="height: 100%; display: flex; flex-direction: column; background: var(--surface-1);">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--surface-2); border-bottom: 1px solid var(--surface-3);">
+            <div style="display: flex; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #27ca40;"></div>
+            </div>
+            <div style="flex: 1; display: flex; align-items: center; background: var(--surface-3); border-radius: 20px; padding: 6px 16px; margin: 0 16px;">
+              <span style="color: var(--text-muted); font-size: 13px;">Search or enter website name</span>
+            </div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #0078d4, #00a4ef); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3);">
+              <svg width="40" height="40" fill="white" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg>
+            </div>
+            <h2 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">Microsoft Edge</h2>
+            <p style="color: var(--text-muted); max-width: 400px; line-height: 1.6;">Welcome to Edge browser. Browse the web with speed and security.</p>
+            <div style="margin-top: 24px; display: flex; gap: 12px;">
+              <button onclick="window.open('https://www.google.com', '_blank')" style="background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px;">Go to Google</button>
+              <button onclick="window.open('https://github.com', '_blank')" style="background: var(--surface-3); color: var(--text); border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 14px;">GitHub</button>
+            </div>
+          </div>
+        </div>`,
+      explorer: `
+        <div style="height: 100%; display: flex; flex-direction: column; background: var(--surface-1);">
+          <div style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--surface-2); border-bottom: 1px solid var(--surface-3);">
+            <div style="display: flex; gap: 8px;">
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
+              <div style="width: 12px; height: 12px; border-radius: 50%; background: #27ca40;"></div>
+            </div>
+            <span style="color: var(--text-muted); font-size: 13px; margin-left: 16px;">Quick access</span>
+          </div>
+          <div style="flex: 1; padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: transform 0.2s;" onclick="window.open('LEVEL-1 PROJECT/index.html', '_blank')" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+              </div>
+              <p style="color: var(--text); font-size: 14px;">My Projects</p>
+            </div>
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: transform 0.2s;" onclick="window.open('IMAGES', '_blank')" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #0078d4, #00a4ef); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+              </div>
+              <p style="color: var(--text); font-size: 14px;">Images</p>
+            </div>
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: transform 0.2s;" onclick="window.open('https://github.com/Ibukunoluwa-Mercy?tab=repositories', '_blank')" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #333, #555); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              </div>
+              <p style="color: var(--text); font-size: 14px;">GitHub</p>
+            </div>
+          </div>
+        </div>`,
+      vscode: `
+        <div style="height: 100%; display: flex; background: #1e1e1e;">
+          <div style="width: 50px; background: #333; display: flex; flex-direction: column; align-items: center; padding-top: 10px;">
+            <div style="width: 24px; height: 24px; margin-bottom: 8px; opacity: 0.7;"><svg viewBox="0 0 24 24" fill="#007acc"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0z"/></svg></div>
+            <div style="width: 24px; height: 24px; margin-bottom: 8px; opacity: 0.7;"><svg viewBox="0 0 24 24" fill="#cd9731"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg></div>
+            <div style="width: 24px; height: 24px; opacity: 0.7;"><svg viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg></div>
+          </div>
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <div style="background: #252526; padding: 8px 16px; display: flex; gap: 16px; border-bottom: 1px solid #3c3c3c;">
+              <span style="color: #fff; font-size: 13px; padding: 4px 8px; background: #1e1e1e;">EXPLORER</span>
+            </div>
+            <div style="flex: 1; padding: 16px; font-family: 'Consolas', monospace; color: #d4d4d4; font-size: 13px;">
+              <p style="margin-bottom: 8px; color: #569cd6;">// Welcome to VS Code</p>
+              <p style="margin-bottom: 16px; color: #6a9955;">// Start coding your projects</p>
+              <p><span style="color: #569cd6;">const</span> <span style="color: #9cdcfe;">developer</span> = {</p>
+              <p style="padding-left: 20px;">name: <span style="color: #ce9178;">"Ibukunoluwa"</span>,</p>
+              <p style="padding-left: 20px;">skills: [<span style="color: #ce9178;">"HTML"</span>, <span style="color: #ce9178;">"CSS"</span>, <span style="color: #ce9178;">"JavaScript"</span>],</p>
+              <p style="padding-left: 20px;">passion: <span style="color: #ce9178;">"Building great apps"</span></p>
+              <p>};</p>
+            </div>
+          </div>
+        </div>`,
+      terminal: `
+        <div id="terminal-container" style="height: 100%; background: #0c0c0c; padding: 16px; font-family: 'Cascadia Code', Consolas, monospace; color: #cccccc; font-size: 14px; overflow-y: auto; position: relative;">
+          <style>@keyframes terminal-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }</style>
+          <div id="terminal-output">
+            <p style="margin-bottom: 16px;">Welcome to Portfolio Terminal<br>Type 'help' to get started.</p>
+          </div>
+          <div style="display: flex; align-items: center; position: relative; margin-top: 8px;">
+            <span style="color: #0078d4; white-space: pre;">ibukunoluwa@portfolio:~$ </span>
+            <div style="position: relative; flex: 1;">
+              <input type="text" id="terminal-input" style="width: 100%; background: transparent; border: none; color: transparent; outline: none; font-family: inherit; font-size: inherit; position: absolute; top: 0; left: 0; caret-color: transparent; z-index: 2;" autocomplete="off" spellcheck="false" autofocus>
+              <div id="terminal-display" style="position: absolute; top: 0; left: 0; color: #ffffff; pointer-events: none; z-index: 1; display: flex; align-items: center; white-space: pre;">
+                <span id="terminal-text"></span><span id="terminal-cursor" style="animation: terminal-blink 1s step-end infinite;">█</span>
+              </div>
+            </div>
+          </div>
+        </div>`,
+      clock: `
+        <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.05) 100%);">
+          <div style="font-size: 72px; font-weight: 300; color: var(--text); font-family: 'Segoe UI', sans-serif; margin-bottom: 8px;" id="appClockTime">10:42 AM</div>
+          <div style="font-size: 18px; color: var(--text-muted);" id="appClockDate">Thursday, May 17, 2026</div>
+          <div style="margin-top: 40px; display: flex; gap: 20px;">
+            <div style="text-align: center; padding: 16px; background: var(--surface-2); border-radius: 12px; min-width: 100px;">
+              <div style="font-size: 32px; font-weight: 600; color: var(--accent);" id="stopwatchDisplay">00:00:00</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Stopwatch</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: var(--surface-2); border-radius: 12px; min-width: 100px;">
+              <div style="font-size: 32px; font-weight: 600; color: var(--accent);" id="timerDisplay">00:00</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Timer</div>
+            </div>
+          </div>
+          <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button onclick="startStopwatch()" style="background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 13px;">Start</button>
+            <button onclick="stopStopwatch()" style="background: var(--surface-3); color: var(--text); border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 13px;">Stop</button>
+            <button onclick="resetStopwatch()" style="background: var(--surface-3); color: var(--text); border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 13px;">Reset</button>
+          </div>
+        </div>`,
+      portfolio: `
+        <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface-1); text-align: center; padding: 40px;">
+          <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f97316, #fb923c); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);">
+            <svg width="40" height="40" fill="white" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z"/></svg>
+          </div>
+          <h2 style="color: var(--text); margin-bottom: 12px; font-size: 24px;">My Portfolio</h2>
+          <p style="color: var(--text-muted); max-width: 400px; line-height: 1.6; margin-bottom: 24px;">View my complete portfolio website with all my projects, skills, and contact information.</p>
+          <button onclick="window.open('index.html', '_blank')" style="background: linear-gradient(135deg, #f97316, #fb923c); color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);">Open Portfolio</button>
+        </div>`,
+      audiomack: `
+        <div id="audiomack-container" style="height: 100%; background: #0b0b0a; color: #ffffff; display: flex; flex-direction: column; font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; position: relative;">
+          <style>
+            #audiomack-container * {
+              box-sizing: border-box;
+            }
+            .am-header {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 12px 20px;
+              background: #121210;
+              border-bottom: 1px solid #22221c;
+            }
+            .am-logo {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              font-weight: 700;
+              font-size: 18px;
+              color: #ffa200;
+              letter-spacing: -0.5px;
+            }
+            .am-search-container {
+              position: relative;
+              width: 250px;
+            }
+            .am-search-input {
+              width: 100%;
+              height: 32px;
+              border-radius: 16px;
+              border: 1px solid #33332c;
+              background: #1a1a17;
+              color: #fff;
+              padding: 0 16px 0 32px;
+              font-size: 13px;
+              outline: none;
+              transition: border-color 0.2s, box-shadow 0.2s;
+            }
+            .am-search-input:focus {
+              border-color: #ffa200;
+              box-shadow: 0 0 0 2px rgba(255, 162, 0, 0.2);
+            }
+            .am-search-icon {
+            position: absolute;
+              left: 10px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 14px;
+              height: 14px;
+              fill: #777770;
+            }
+            .am-content-split {
+              display: flex;
+              flex: 1;
+              overflow: hidden;
+            }
+            .am-songs-section {
+              flex: 1;
+              padding: 20px;
+              overflow-y: auto;
+            }
+            .am-section-title {
+              font-size: 16px;
+              font-weight: 600;
+              color: #fff;
+              margin-bottom: 12px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            .am-track-list {
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+            }
+            .am-track-item {
+              display: flex;
+              align-items: center;
+              padding: 8px 12px;
+              border-radius: 6px;
+              background: #141412;
+              border: 1px solid #1f1f1b;
+              cursor: pointer;
+              transition: background 0.15s, border-color 0.15s;
+            }
+            .am-track-item:hover {
+              background: #1e1e1a;
+              border-color: #33332c;
+            }
+            .am-track-item.active {
+              background: rgba(255, 162, 0, 0.08);
+              border-color: rgba(255, 162, 0, 0.4);
+            }
+            .am-track-cover-mini {
+              width: 40px;
+              height: 40px;
+              border-radius: 4px;
+              margin-right: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 14px;
+              color: #fff;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            }
+            .am-track-details-mini {
+              flex: 1;
+            }
+            .am-track-name-mini {
+              font-size: 13px;
+              font-weight: 600;
+              color: #fff;
+            }
+            .am-track-artist-mini {
+              font-size: 11px;
+              color: #a0a095;
+              margin-top: 2px;
+            }
+            .am-track-genre-badge {
+              font-size: 10px;
+              padding: 2px 6px;
+              background: #252520;
+              border-radius: 10px;
+              color: #a0a095;
+              margin-right: 16px;
+            }
+            .am-track-duration-mini {
+              font-size: 12px;
+              color: #777770;
+            }
+            .am-now-playing-panel {
+              width: 240px;
+              background: #121210;
+              border-left: 1px solid #22221c;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              padding: 24px 16px;
+              text-align: center;
+              justify-content: center;
+            }
+            .am-big-art {
+              width: 140px;
+              height: 140px;
+              border-radius: 12px;
+              margin-bottom: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 48px;
+              font-weight: bold;
+              box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+              transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .am-big-art.playing {
+              transform: scale(1.05);
+            }
+            .am-big-title {
+              font-size: 15px;
+              font-weight: 700;
+              color: #fff;
+              margin-bottom: 4px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              width: 200px;
+            }
+            .am-big-artist {
+              font-size: 12px;
+              color: #ffa200;
+              margin-bottom: 24px;
+            }
+            .am-visualizer-bars {
+              display: flex;
+              align-items: flex-end;
+              height: 24px;
+              gap: 3px;
+              margin-top: 8px;
+            }
+            .am-viz-bar {
+              width: 4px;
+              background: #ffa200;
+              border-radius: 2px 2px 0 0;
+              height: 4px;
+              transition: height 0.1s ease;
+            }
+            .am-player-controls {
+              height: 72px;
+              background: #121210;
+              border-top: 1px solid #22221c;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding: 0 20px;
+              z-index: 2;
+            }
+            .am-left-controls {
+              display: flex;
+              align-items: center;
+              width: 200px;
+            }
+            .am-player-track-info {
+              margin-left: 12px;
+              overflow: hidden;
+              width: 140px;
+            }
+            .am-player-track-name {
+              font-size: 13px;
+              font-weight: 600;
+              color: #fff;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .am-player-track-artist {
+              font-size: 11px;
+              color: #a0a095;
+              margin-top: 2px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .am-center-controls {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 6px;
+            }
+            .am-buttons {
+              display: flex;
+              align-items: center;
+              gap: 16px;
+            }
+            .am-btn {
+              background: none;
+              border: none;
+              cursor: pointer;
+              padding: 4px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+              transition: background 0.15s, transform 0.1s;
+            }
+            .am-btn svg {
+              fill: #fff;
+              width: 18px;
+              height: 18px;
+            }
+            .am-btn:hover svg {
+              fill: #ffa200;
+            }
+            .am-btn:active {
+              transform: scale(0.95);
+            }
+            .am-btn-play {
+              background: #ffa200;
+              width: 32px;
+              height: 32px;
+              box-shadow: 0 4px 10px rgba(255, 162, 0, 0.3);
+            }
+            .am-btn-play svg {
+              fill: #000;
+              width: 16px;
+              height: 16px;
+            }
+            .am-btn-play:hover {
+              background: #ffb833;
+            }
+            .am-btn-play:hover svg {
+              fill: #000;
+            }
+            .am-progress-container {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              width: 100%;
+              max-width: 400px;
+            }
+            .am-time {
+              font-size: 10px;
+              color: #777770;
+              min-width: 30px;
+            }
+            .am-time-current {
+              text-align: right;
+            }
+            .am-slider {
+              flex: 1;
+              height: 4px;
+              -webkit-appearance: none;
+              background: #2b2b27;
+              border-radius: 2px;
+              outline: none;
+              cursor: pointer;
+            }
+            .am-slider::-webkit-slider-thumb {
+              -webkit-appearance: none;
+              width: 10px;
+              height: 10px;
+              background: #ffa200;
+              border-radius: 50%;
+            }
+            .am-right-controls {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              width: 200px;
+              justify-content: flex-end;
+            }
+            .am-volume-btn svg {
+              width: 16px;
+              height: 16px;
+              fill: #a0a095;
+            }
+            .am-volume-btn:hover svg {
+              fill: #ffa200;
+            }
+            .am-volume-slider {
+              width: 70px;
+            }
+          </style>
+
+          <audio id="audiomack-audio" preload="auto"></audio>
+
+          <div class="am-header">
+            <div class="am-logo">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="width: 22px; height: 22px;">
+                <path d="M3 17h2v3H3zm4-5h2v8H7zm4-8h2v16h-2zm4 4h2v12h-2zm4-2h2v10h-2z" />
+              </svg>
+              <span>audiomack</span>
+            </div>
+            <div class="am-search-container">
+              <svg class="am-search-icon" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg>
+              <input type="text" class="am-search-input" id="audiomack-search-input" placeholder="Search songs or artists...">
+            </div>
+          </div>
+
+          <div class="am-content-split">
+            <div class="am-songs-section">
+              <div class="am-section-title" id="am-list-header">Trending Songs</div>
+              <div class="am-track-list" id="audiomack-track-list"></div>
+            </div>
+
+            <div class="am-now-playing-panel">
+              <div class="am-big-art" id="audiomack-big-art">A</div>
+              <div class="am-big-title" id="audiomack-big-title">No Track Selected</div>
+              <div class="am-big-artist" id="audiomack-big-artist">-</div>
+              <div class="am-visualizer-bars" id="audiomack-visualizer">
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+                <div class="am-viz-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="am-player-controls">
+            <div class="am-left-controls">
+              <div class="am-track-cover-mini" id="audiomack-mini-art" style="background: #252520; font-size: 11px;">-</div>
+              <div class="am-player-track-info">
+                <div class="am-player-track-name" id="audiomack-mini-title">Select a track</div>
+                <div class="am-player-track-artist" id="audiomack-mini-artist">to start listening</div>
+              </div>
+            </div>
+
+            <div class="am-center-controls">
+              <div class="am-buttons">
+                <button class="am-btn" id="audiomack-prev" title="Previous">
+                  <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                </button>
+                <button class="am-btn am-btn-play" id="audiomack-play-pause" title="Play">
+                  <svg id="audiomack-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  <svg id="audiomack-pause-icon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                <button class="am-btn" id="audiomack-next" title="Next">
+                  <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6z"/></svg>
+                </button>
+              </div>
+              <div class="am-progress-container">
+                <span class="am-time am-time-current" id="audiomack-time-current">0:00</span>
+                <input type="range" class="am-slider" id="audiomack-progress" min="0" max="100" value="0">
+                <span class="am-time" id="audiomack-time-total">0:00</span>
+              </div>
+            </div>
+
+            <div class="am-right-controls">
+              <button class="am-btn am-volume-btn" id="audiomack-mute" title="Mute/Unmute">
+                <svg viewBox="0 0 24 24" id="am-vol-icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+              </button>
+              <input type="range" class="am-slider am-volume-slider" id="audiomack-volume" min="0" max="100" value="50">
+            </div>
+          </div>
+        </div>`
+    };
+
+    const appIcons = {
+      projects: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>',
+      about: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>',
+      contact: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>',
+      skills: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+      resume: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>',
+      github: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>',
+      edge: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10z"/></svg>',
+      explorer: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>',
+      vscode: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm4.3 17.4l-5.4-5.4 1.4-1.4 4 4 7-7 1.4 1.4-8.4 9.4z"/></svg>',
+      terminal: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',
+      clock: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
+      portfolio: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z"/></svg>',
+      chrome: '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>',
+      audiomack: '<svg viewBox="0 0 24 24" fill="black"><path d="M3 17h2v3H3zm4-5h2v8H7zm4-8h2v16h-2zm4 4h2v12h-2zm4-2h2v10h-2z"/></svg>'
+    };
+
+    const appColors = {
+      projects: '#f97316',
+      about: '#0078d4',
+      contact: '#5c2d91',
+      skills: '#107c10',
+      resume: '#2f2f2f',
+      github: '#333',
+      edge: '#0078d4',
+      explorer: '#2f2f2f',
+      vscode: '#007acc',
+      terminal: '#2f2f2f',
+      clock: '#f97316',
+      portfolio: '#f97316',
+      chrome: '#4285f4',
+      audiomack: '#ffa200'
+    };
+
+    const appNames = {
+      projects: 'My Projects',
+      about: 'About Me',
+      contact: 'Contact',
+      skills: 'Skills',
+      resume: 'Resume',
+      github: 'GitHub',
+      edge: 'Edge',
+      chrome: 'Chrome',
+      explorer: 'Explorer',
+      vscode: 'VS Code',
+      terminal: 'Terminal',
+      clock: 'Clock',
+      portfolio: 'Portfolio',
+      chrome: 'Chrome',
+      audiomack: 'Audiomack'
+    };
+
+    function createWindow(id, title, icon, contentHTML) {
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.id = id;
+      win.innerHTML = `
+        <div class="window-titlebar">
+          <div class="window-icon" style="background: ${appColors[id] || '#0078d4'}; border-radius: 3px;">${icon}</div>
+          <span class="window-title">${title}</span>
+          <div class="window-controls">
+            <div class="window-btn btn-min" title="Minimize">
+              <svg viewBox="0 0 10 10"><path d="M0 5h10v1H0z"/></svg>
+            </div>
+            <div class="window-btn btn-max" title="Maximize">
+              <svg viewBox="0 0 10 10" class="max-icon"><path d="M0 0v10h10V0H0zm9 9H1V1h8v8z"/></svg>
+              <svg viewBox="0 0 10 10" class="restore-icon" style="display:none;"><path d="M2 0v2H0v8h8V8h2V0H2zm6 8H1V3h7v5zm1-6H3V1h6v1z"/></svg>
+            </div>
+            <div class="window-btn btn-close" title="Close">
+              <svg viewBox="0 0 10 10"><path d="M1 0L0 1l4 4-4 4 1 1 4-4 4 4 1-1-4-4 4-4-1-1-4 4z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="window-content">${contentHTML}</div>
+        <div class="resize-handle resize-handle-n"></div>
+        <div class="resize-handle resize-handle-s"></div>
+        <div class="resize-handle resize-handle-e"></div>
+        <div class="resize-handle resize-handle-w"></div>
+        <div class="resize-handle resize-handle-ne"></div>
+        <div class="resize-handle resize-handle-nw"></div>
+        <div class="resize-handle resize-handle-se"></div>
+        <div class="resize-handle resize-handle-sw"></div>
+      `;
+
+      desktop.appendChild(win);
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight - 48;
+      const winWidth = 600;
+      const winHeight = 450;
+      win.style.left = `${(viewportWidth - winWidth) / 2}px`;
+      win.style.top = `${(viewportHeight - winHeight) / 2}px`;
+      win.style.width = `${winWidth}px`;
+      win.style.height = `${winHeight}px`;
+      win.style.zIndex = ++zIndexCounter;
+
+      openWindows[id] = { window: win, minimized: false, maximized: false };
+
+      setTimeout(() => win.classList.add('visible'), 10);
+      updateTaskbar();
+
+      const titlebar = win.querySelector('.window-titlebar');
+      let isDragging = false;
+      let dragStartX, dragStartY, initialLeft, initialTop, savedState = {};
+
+      titlebar.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.window-btn')) return;
+        bringToFront(win);
+        if (openWindows[id].maximized) return;
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        initialLeft = win.offsetLeft;
+        initialTop = win.offsetTop;
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+        newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - win.offsetWidth));
+        newTop = Math.max(0, Math.min(newTop, window.innerHeight - 48 - win.offsetHeight));
+        win.style.left = `${newLeft}px`;
+        win.style.top = `${newTop}px`;
+
+        handleSnap(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDragging) {
+          isDragging = false;
+          applySnap();
+        }
+      });
+
+      function handleSnap(mouseX, mouseY) {
+        snapPreview.classList.remove('visible');
+        const vw = window.innerWidth;
+        const vh = window.innerHeight - 48;
+
+        if (mouseY < 50) {
+          snapPreview.style.left = '0';
+          snapPreview.style.top = '0';
+          snapPreview.style.width = `${vw}px`;
+          snapPreview.style.height = `${vh}px`;
+          snapPreview.classList.add('visible');
+        } else if (mouseX < vw / 2 && mouseX < 100) {
+          snapPreview.style.left = '0';
+          snapPreview.style.top = '0';
+          snapPreview.style.width = `${vw / 2}px`;
+          snapPreview.style.height = `${vh}px`;
+          snapPreview.classList.add('visible');
+        } else if (mouseX > vw / 2 && mouseX > vw - 100) {
+          snapPreview.style.left = `${vw / 2}px`;
+          snapPreview.style.top = '0';
+          snapPreview.style.width = `${vw / 2}px`;
+          snapPreview.style.height = `${vh}px`;
+          snapPreview.classList.add('visible');
+        }
+      }
+
+      function applySnap() {
+        if (!snapPreview.classList.contains('visible')) return;
+        const rect = snapPreview.getBoundingClientRect();
+        win.style.left = `${rect.left}px`;
+        win.style.top = `${rect.top}px`;
+        win.style.width = `${rect.width}px`;
+        win.style.height = `${rect.height}px`;
+        snapPreview.classList.remove('visible');
+      }
+
+      const resizeHandles = win.querySelectorAll('.resize-handle');
+      resizeHandles.forEach(handle => {
+        let isResizing = false;
+        let resizeStartX, resizeStartY, startWidth, startHeight, startLeft, startTop, direction;
+
+        handle.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          bringToFront(win);
+          if (openWindows[id].maximized) return;
+          isResizing = true;
+          direction = handle.className.replace('resize-handle resize-handle-', '');
+          resizeStartX = e.clientX;
+          resizeStartY = e.clientY;
+          startWidth = win.offsetWidth;
+          startHeight = win.offsetHeight;
+          startLeft = win.offsetLeft;
+          startTop = win.offsetTop;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isResizing) return;
+          const dx = e.clientX - resizeStartX;
+          const dy = e.clientY - resizeStartY;
+          let newWidth = startWidth;
+          let newHeight = startHeight;
+          let newLeft = startLeft;
+          let newTop = startTop;
+
+          if (direction.includes('e')) newWidth = Math.max(400, startWidth + dx);
+          if (direction.includes('w')) { newWidth = Math.max(400, startWidth - dx); newLeft = startLeft + dx; }
+          if (direction.includes('s')) newHeight = Math.max(300, startHeight + dy);
+          if (direction.includes('n')) { newHeight = Math.max(300, startHeight - dy); newTop = startTop + dy; }
+
+          win.style.width = `${newWidth}px`;
+          win.style.height = `${newHeight}px`;
+          win.style.left = `${newLeft}px`;
+          win.style.top = `${newTop}px`;
+        });
+
+        document.addEventListener('mouseup', () => { isResizing = false; });
+      });
+
+      win.addEventListener('mousedown', () => bringToFront(win));
+
+      const btnMin = win.querySelector('.btn-min');
+      const btnMax = win.querySelector('.btn-max');
+      const btnClose = win.querySelector('.btn-close');
+
+      btnMin.addEventListener('click', () => {
+        win.classList.add('minimizing');
+        setTimeout(() => {
+          win.style.display = 'none';
+          win.classList.remove('minimizing');
+          openWindows[id].minimized = true;
+          updateTaskbar();
+        }, 200);
+      });
+
+      btnMax.addEventListener('click', () => {
+        const isMax = openWindows[id].maximized;
+        openWindows[id].maximized = !isMax;
+        win.classList.toggle('maximized', !isMax);
+        const maxIcon = btnMax.querySelector('.max-icon');
+        const restoreIcon = btnMax.querySelector('.restore-icon');
+        maxIcon.style.display = isMax ? 'block' : 'none';
+        restoreIcon.style.display = isMax ? 'none' : 'block';
+        updateTaskbar();
+      });
+
+      btnClose.addEventListener('click', () => {
+        win.classList.add('minimizing');
+        if (id === 'audiomack') {
+          const audio = document.getElementById('audiomack-audio');
+          if (audio) audio.pause();
+        }
+        setTimeout(() => {
+          win.remove();
+          delete openWindows[id];
+          updateTaskbar();
+        }, 200);
+      });
+
+      return win;
+    }
+
+    function bringToFront(win) {
+      win.style.zIndex = ++zIndexCounter;
+      Object.keys(openWindows).forEach(id => {
+        if (openWindows[id].window === win) return;
+        openWindows[id].window.style.zIndex = zIndexCounter - 1;
+      });
+      updateTaskbar();
+    }
+
+    function updateTaskbar() {
+      taskbarWindows.innerHTML = '';
+      Object.keys(openWindows).forEach(id => {
+        const info = openWindows[id];
+        const btn = document.createElement('div');
+        btn.className = `taskbar-window-btn ${info.minimized ? '' : 'active'}`;
+        btn.innerHTML = `<div style="width: 16px; height: 16px; background: ${appColors[id]}; border-radius: 3px; display: flex; align-items: center; justify-content: center;">${appIcons[id]}</div><span>${appNames[id]}</span>`;
+        btn.addEventListener('click', () => {
+          if (info.minimized) {
+            info.window.style.display = 'block';
+            info.minimized = false;
+            info.window.classList.add('restoring');
+            setTimeout(() => info.window.classList.remove('restoring'), 10);
+          } else if (info.window.style.zIndex == zIndexCounter) {
+            info.window.classList.add('minimizing');
+            setTimeout(() => {
+              info.window.style.display = 'none';
+              info.window.classList.remove('minimizing');
+              info.minimized = true;
+              updateTaskbar();
+            }, 200);
+          } else {
+            bringToFront(info.window);
+          }
+          updateTaskbar();
+        });
+        taskbarWindows.appendChild(btn);
+      });
+    }
+
+    function openAppWindow(appId) {
+      if (openWindows[appId]) {
+        bringToFront(openWindows[appId].window);
+        if (openWindows[appId].minimized) {
+          openWindows[appId].window.style.display = 'block';
+          openWindows[appId].minimized = false;
+        }
+        updateTaskbar();
+        return;
+      }
+      createWindow(appId, appNames[appId], appIcons[appId], appContents[appId]);
+      if (appId === 'terminal') {
+        initTerminal();
+      } else if (appId === 'audiomack') {
+        initAudiomack();
+      }
+    }
+
+    function initTerminal() {
+      const container = document.getElementById('terminal-container');
+      const input = document.getElementById('terminal-input');
+      const display = document.getElementById('terminal-text');
+      const output = document.getElementById('terminal-output');
+
+      container.addEventListener('click', () => input.focus());
+
+      input.addEventListener('input', () => {
+        display.textContent = input.value;
+      });
+
+      let history = [];
+      let historyIndex = -1;
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const cmd = input.value.trim();
+          if (cmd) {
+            history.push(cmd);
+            if (history.length > 20) history.shift();
+          }
+          historyIndex = history.length;
+
+          processCommand(cmd);
+          input.value = '';
+          display.textContent = '';
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (history.length > 0) {
+            if (historyIndex === -1 || historyIndex === history.length) {
+              historyIndex = history.length - 1;
+            } else if (historyIndex > 0) {
+              historyIndex--;
+            }
+            input.value = history[historyIndex];
+            display.textContent = input.value;
+          }
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (historyIndex !== -1 && historyIndex < history.length - 1) {
+            historyIndex++;
+            input.value = history[historyIndex];
+            display.textContent = input.value;
+          } else if (historyIndex === history.length - 1) {
+            historyIndex = history.length;
+            input.value = '';
+            display.textContent = '';
+          }
+        }
+      });
+
+      function processCommand(cmd) {
+        const promptHtml = `<p style="margin-top: 8px;"><span style="color: #0078d4;">ibukunoluwa@portfolio:~$</span> <span style="color: #ffffff;">${cmd}</span></p>`;
+        let responseHtml = '';
+
+        const lowerCmd = cmd.toLowerCase();
+
+        if (lowerCmd === 'help') {
+          responseHtml = `<p style="margin-top: 8px;">Available commands:<br>
+            <span style="color: #569cd6;">help</span>     - lists all available commands<br>
+            <span style="color: #569cd6;">whoami</span>   - returns your name, role, location<br>
+            <span style="color: #569cd6;">skills</span>   - returns a formatted list of your top skills<br>
+            <span style="color: #569cd6;">projects</span> - returns a list of project names<br>
+            <span style="color: #569cd6;">contact</span>  - returns contact links<br>
+            <span style="color: #569cd6;">ls</span>       - shows directory listing<br>
+            <span style="color: #569cd6;">cat about.txt</span> - prints your bio<br>
+            <span style="color: #569cd6;">clear</span>    - clears the terminal</p>`;
+        } else if (lowerCmd === 'whoami') {
+          responseHtml = `<p style="margin-top: 8px; color: #cccccc;">Ojedapo Ibukunoluwa Mercy<br>Full Stack Web Developer<br>Oyo, Nigeria</p>`;
+        } else if (lowerCmd === 'skills') {
+          responseHtml = `<p style="margin-top: 8px; color: #cccccc;">Top Skills:<br>- HTML & CSS (95%)<br>- JavaScript (85%)<br>- React & Node.js<br>- Firebase (75%)</p>`;
+        } else if (lowerCmd === 'projects') {
+          responseHtml = `<p style="margin-top: 8px; color: #cccccc;">1. Cowrywise Clone - Financial planning platform<br>2. Login Page - User authentication interface</p>`;
+        } else if (lowerCmd === 'contact') {
+          responseHtml = `<p style="margin-top: 8px;">
+            <a href="mailto:ibukunojedapo2022@gmail.com" style="color: #569cd6; text-decoration: none;">Email: ibukunojedapo2022@gmail.com</a><br>
+            <a href="https://github.com/Ibukunoluwa-Mercy" target="_blank" style="color: #569cd6; text-decoration: none;">GitHub: github.com/Ibukunoluwa-Mercy</a><br>
+            <a href="https://linkedin.com/in/ibukunoluwa-mercy" target="_blank" style="color: #569cd6; text-decoration: none;">LinkedIn: linkedin.com/in/ibukunoluwa-mercy</a>
+          </p>`;
+        } else if (lowerCmd === 'ls') {
+          responseHtml = `<p style="margin-top: 8px; color: #cccccc;">about.txt   projects/   skills/   contact/</p>`;
+        } else if (lowerCmd === 'cat about.txt') {
+          responseHtml = `<p style="margin-top: 8px; color: #cccccc; max-width: 600px;">I'm Ibukunoluwa — a full stack web developer who finds genuine joy in the craft of building things for the web. From architecting robust backends to designing seamless user experiences on the frontend, I thrive in the full lifecycle of a product.</p>`;
+        } else if (lowerCmd === 'clear') {
+          output.innerHTML = '';
+          return;
+        } else if (lowerCmd === 'sudo hire-me') {
+          responseHtml = `<p style="margin-top: 8px; color: #27ca40; animation: terminal-blink 1s step-end 3;">Executing hire sequence... ✅ Request sent to your future employer!</p>`;
+        } else if (cmd === '') {
+          responseHtml = '';
+        } else {
+          responseHtml = `<p style="margin-top: 8px;"><span style="color: #f44336;">command not found: ${cmd}</span></p>`;
+        }
+
+        output.insertAdjacentHTML('beforeend', promptHtml + responseHtml);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      setTimeout(() => input.focus(), 100);
+    }
+
+    window.initAudiomack = function () {
+      const audio = document.getElementById('audiomack-audio');
+      const trackListContainer = document.getElementById('audiomack-track-list');
+      const searchInput = document.getElementById('audiomack-search-input');
+      const listHeader = document.getElementById('am-list-header');
+
+      const playPauseBtn = document.getElementById('audiomack-play-pause');
+      const playIcon = document.getElementById('audiomack-play-icon');
+      const pauseIcon = document.getElementById('audiomack-pause-icon');
+      const prevBtn = document.getElementById('audiomack-prev');
+      const nextBtn = document.getElementById('audiomack-next');
+
+      const progressSlider = document.getElementById('audiomack-progress');
+      const timeCurrent = document.getElementById('audiomack-time-current');
+      const timeTotal = document.getElementById('audiomack-time-total');
+
+      const volumeSlider = document.getElementById('audiomack-volume');
+      const muteBtn = document.getElementById('audiomack-mute');
+
+      const bigArt = document.getElementById('audiomack-big-art');
+      const bigTitle = document.getElementById('audiomack-big-title');
+      const bigArtist = document.getElementById('audiomack-big-artist');
+
+      const miniArt = document.getElementById('audiomack-mini-art');
+      const miniTitle = document.getElementById('audiomack-mini-title');
+      const miniArtist = document.getElementById('audiomack-mini-artist');
+
+      // Curated fallbacks in case iTunes search fails or is offline
+      const audiomackTracks = [
+        { id: 1, title: 'Calm Down', artist: 'Rema', genre: 'Afrobeats', duration: '3:39', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', color1: '#ff8a00', color2: '#da1b60' },
+        { id: 2, title: 'Last Last', artist: 'Burna Boy', genre: 'Afrobeats', duration: '2:52', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', color1: '#8a2387', color2: '#e94057' },
+        { id: 3, title: 'Lonely At The Top', artist: 'Asake', genre: 'Amapiano', duration: '3:10', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', color1: '#f27121', color2: '#e94057' },
+        { id: 4, title: 'Hotline Bling', artist: 'Drake', genre: 'Hip Hop', duration: '5:02', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', color1: '#00c6ff', color2: '#0072ff' },
+        { id: 5, title: 'Bad Guy', artist: 'Billie Eilish', genre: 'Pop', duration: '3:14', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', color1: '#11998e', color2: '#38ef7d' },
+        { id: 6, title: 'Blinding Lights', artist: 'The Weeknd', genre: 'Synthwave', duration: '3:21', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3', color1: '#ff007f', color2: '#7f00ff' },
+        { id: 7, title: 'Shape of You', artist: 'Ed Sheeran', genre: 'Pop', duration: '3:53', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3', color1: '#3a7bd5', color2: '#3a6073' },
+        { id: 8, title: 'Stay', artist: 'The Kid LAROI & Justin Bieber', genre: 'Pop', duration: '2:21', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', color1: '#ff9966', color2: '#ff5e62' }
+      ];
+
+      let currentPlaylist = audiomackTracks;
+      let renderedPlaylist = null;
+      let currentTrackIndex = 0;
+      let isPlaying = false;
+
+      // Initialize volume
+      audio.volume = state.volume / 100;
+      volumeSlider.value = state.volume;
+
+      function getColorsFromString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const h1 = Math.abs(hash % 360);
+        const h2 = (h1 + 40) % 360;
+        return {
+          color1: `hsl(${h1}, 80%, 55%)`,
+          color2: `hsl(${h2}, 80%, 35%)`
+        };
+      }
+
+      function renderList(tracks) {
+        renderedPlaylist = tracks;
+        trackListContainer.innerHTML = '';
+        tracks.forEach((track, index) => {
+          const isActive = index === currentTrackIndex && currentPlaylist === tracks;
+          const item = document.createElement('div');
+          item.className = 'am-track-item' + (isActive ? ' active' : '');
+          
+          const artworkHTML = track.artwork 
+            ? `<img src="${track.artwork}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;" />`
+            : track.title.charAt(0);
+
+          item.innerHTML = `
+            <div class="am-track-cover-mini" style="background: linear-gradient(135deg, ${track.color1}, ${track.color2})">
+              ${artworkHTML}
+            </div>
+            <div class="am-track-details-mini">
+              <div class="am-track-name-mini">${track.title}</div>
+              <div class="am-track-artist-mini">${track.artist}</div>
+            </div>
+            <span class="am-track-genre-badge">${track.genre}</span>
+            <div class="am-track-duration-mini">${track.duration}</div>
+          `;
+          item.addEventListener('click', () => {
+            currentPlaylist = tracks;
+            loadTrack(index);
+            playTrack();
+          });
+          trackListContainer.appendChild(item);
+        });
+      }
+
+      function loadTrack(index) {
+        currentTrackIndex = index;
+        const track = currentPlaylist[currentTrackIndex];
+
+        audio.src = track.url;
+        audio.load();
+
+        if (track.artwork) {
+          const highResArt = track.artwork.replace('100x100bb', '300x300bb');
+          bigArt.style.background = '#1a1a17';
+          bigArt.innerHTML = `<img src="${highResArt}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;" />`;
+          miniArt.innerHTML = `<img src="${track.artwork}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;" />`;
+        } else {
+          bigArt.style.background = `linear-gradient(135deg, ${track.color1}, ${track.color2})`;
+          bigArt.textContent = track.title.charAt(0);
+          miniArt.style.background = `linear-gradient(135deg, ${track.color1}, ${track.color2})`;
+          miniArt.textContent = track.title.charAt(0);
+        }
+
+        bigTitle.textContent = track.title;
+        bigArtist.textContent = track.artist;
+        miniTitle.textContent = track.title;
+        miniArtist.textContent = track.artist;
+
+        const items = trackListContainer.querySelectorAll('.am-track-item');
+        items.forEach((item, idx) => {
+          item.classList.toggle('active', idx === currentTrackIndex && currentPlaylist === renderedPlaylist);
+        });
+
+        progressSlider.value = 0;
+        timeCurrent.textContent = '0:00';
+        timeTotal.textContent = track.duration;
+      }
+
+      function playTrack() {
+        isPlaying = true;
+        audio.play().then(() => {
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          startVisualizer();
+        }).catch(err => {
+          console.log("Audio playback failed: ", err);
+          isPlaying = false;
+        });
+      }
+
+      function pauseTrack() {
+        isPlaying = false;
+        audio.pause();
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+        stopVisualizer();
+      }
+
+      playPauseBtn.addEventListener('click', () => {
+        if (isPlaying) {
+          pauseTrack();
+        } else {
+          playTrack();
+        }
+      });
+
+      prevBtn.addEventListener('click', () => {
+        let prevIndex = currentTrackIndex - 1;
+        if (prevIndex < 0) prevIndex = currentPlaylist.length - 1;
+        loadTrack(prevIndex);
+        playTrack();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        let nextIndex = currentTrackIndex + 1;
+        if (nextIndex >= currentPlaylist.length) nextIndex = 0;
+        loadTrack(nextIndex);
+        playTrack();
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const progress = (audio.currentTime / audio.duration) * 100;
+        progressSlider.value = progress;
+        
+        const curMins = Math.floor(audio.currentTime / 60);
+        const curSecs = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+        timeCurrent.textContent = curMins + ':' + curSecs;
+      });
+
+      progressSlider.addEventListener('input', () => {
+        if (!audio.duration) return;
+        const seekTime = (progressSlider.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+      });
+
+      audio.addEventListener('durationchange', () => {
+        const totalMins = Math.floor(audio.duration / 60);
+        const totalSecs = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+        timeTotal.textContent = totalMins + ':' + totalSecs;
+      });
+
+      audio.addEventListener('ended', () => {
+        let nextIndex = currentTrackIndex + 1;
+        if (nextIndex >= currentPlaylist.length) nextIndex = 0;
+        loadTrack(nextIndex);
+        playTrack();
+      });
+
+      volumeSlider.addEventListener('input', (e) => {
+        updateSystemVolume(e.target.value);
+      });
+
+      let lastVolume = 50;
+      muteBtn.addEventListener('click', () => {
+        if (state.volume > 0) {
+          lastVolume = state.volume;
+          updateSystemVolume(0);
+        } else {
+          updateSystemVolume(lastVolume);
+        }
+      });
+
+      // iTunes Search API Integration
+      let searchTimeout = null;
+      let abortController = null;
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        if (searchTimeout) clearTimeout(searchTimeout);
+        
+        if (query === '') {
+          listHeader.textContent = 'Trending Songs';
+          currentPlaylist = audiomackTracks;
+          renderList(currentPlaylist);
+          loadTrack(0);
+          return;
+        }
+
+        listHeader.textContent = 'Searching iTunes...';
+        searchTimeout = setTimeout(() => {
+          searchItunes(query);
+        }, 400);
+      });
+
+      function searchItunes(query) {
+        if (abortController) abortController.abort();
+        abortController = new AbortController();
+
+        const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=15`;
+        
+        fetch(url, { signal: abortController.signal })
+          .then(res => res.json())
+          .then(data => {
+            if (!data.results || data.results.length === 0) {
+              renderCustomPlaceholderList(query);
+              return;
+            }
+
+            const searchResults = data.results.map((item) => {
+              const totalSecs = Math.floor(item.trackTimeMillis / 1000);
+              const mins = Math.floor(totalSecs / 60);
+              const secs = (totalSecs % 60).toString().padStart(2, '0');
+
+              return {
+                id: 'itunes-' + item.trackId,
+                title: item.trackName,
+                artist: item.artistName,
+                genre: item.primaryGenreName || 'Music',
+                duration: `${mins}:${secs}`,
+                url: item.previewUrl,
+                color1: getColorsFromString(item.artistName).color1,
+                color2: getColorsFromString(item.artistName).color2,
+                artwork: item.artworkUrl100
+              };
+            });
+
+            listHeader.textContent = 'Search Results';
+            currentPlaylist = searchResults;
+            renderList(currentPlaylist);
+            loadTrack(0);
+            playTrack();
+          })
+          .catch(err => {
+            if (err.name === 'AbortError') return;
+            console.error('iTunes search error:', err);
+            listHeader.textContent = 'Offline Fallback Search';
+            
+            // Offline local search fallback
+            const filtered = audiomackTracks.filter(t => 
+              t.title.toLowerCase().includes(query.toLowerCase()) || 
+              t.artist.toLowerCase().includes(query.toLowerCase())
+            );
+            if (filtered.length > 0) {
+              currentPlaylist = filtered;
+              renderList(currentPlaylist);
+              loadTrack(0);
+            } else {
+              renderCustomPlaceholderList(query);
+            }
+          });
+      }
+
+      function renderCustomPlaceholderList(queryText) {
+        trackListContainer.innerHTML = `
+          <div class="am-track-item" id="am-custom-track-trigger" style="border-color: #ffa200; display: flex; align-items: center; padding: 12px; border-radius: 8px; cursor: pointer; background: #141412;">
+            <div class="am-track-cover-mini" style="background: linear-gradient(135deg, #ffa200, #ff5f56)">🎵</div>
+            <div class="am-track-details-mini" style="flex: 1;">
+              <div class="am-track-name-mini" style="color: #ffa200;">Play "${queryText}"</div>
+              <div class="am-track-artist-mini">Search match & stream</div>
+            </div>
+            <span class="am-track-genre-badge" style="background: #ffa200; color: #000; font-weight: 600;">Custom Stream</span>
+            <div class="am-track-duration-mini">4:00</div>
+          </div>
+        `;
+        
+        document.getElementById('am-custom-track-trigger').addEventListener('click', () => {
+          const newTrack = {
+            id: 'custom-' + Date.now(),
+            title: queryText,
+            artist: "Dynamic Stream",
+            genre: "Custom",
+            duration: "4:00",
+            url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-' + ((audiomackTracks.length % 8) + 1) + '.mp3',
+            color1: '#ffa200',
+            color2: '#ff5f56'
+          };
+          audiomackTracks.push(newTrack);
+          currentPlaylist = [newTrack];
+          renderList(currentPlaylist);
+          loadTrack(0);
+          playTrack();
+        });
+      }
+
+      let visualizerInterval = null;
+      function startVisualizer() {
+        if (visualizerInterval) clearInterval(visualizerInterval);
+        const bars = document.querySelectorAll('#audiomack-visualizer .am-viz-bar');
+        const bigArt = document.getElementById('audiomack-big-art');
+        if (bigArt) bigArt.classList.add('playing');
+        visualizerInterval = setInterval(() => {
+          bars.forEach(bar => {
+            const height = Math.floor(Math.random() * 22) + 2;
+            bar.style.height = height + 'px';
+          });
+        }, 100);
+      }
+      function stopVisualizer() {
+        if (visualizerInterval) {
+          clearInterval(visualizerInterval);
+          visualizerInterval = null;
+        }
+        const bigArt = document.getElementById('audiomack-big-art');
+        if (bigArt) bigArt.classList.remove('playing');
+        const bars = document.querySelectorAll('#audiomack-visualizer .am-viz-bar');
+        bars.forEach(bar => {
+          bar.style.height = '4px';
+        });
+      }
+
+      // Fetch dynamic popular tracks from iTunes initially, with offline fallback
+      function loadTrendingSongs() {
+        listHeader.textContent = 'Loading Trending...';
+        const url = 'https://itunes.apple.com/search?term=Afrobeats&media=music&limit=10';
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            if (data.results && data.results.length > 0) {
+              const trending = data.results.map((item) => {
+                const totalSecs = Math.floor(item.trackTimeMillis / 1000);
+                const mins = Math.floor(totalSecs / 60);
+                const secs = (totalSecs % 60).toString().padStart(2, '0');
+
+                return {
+                  id: 'itunes-' + item.trackId,
+                  title: item.trackName,
+                  artist: item.artistName,
+                  genre: item.primaryGenreName || 'Afrobeats',
+                  duration: `${mins}:${secs}`,
+                  url: item.previewUrl,
+                  color1: getColorsFromString(item.artistName).color1,
+                  color2: getColorsFromString(item.artistName).color2,
+                  artwork: item.artworkUrl100
+                };
+              });
+              currentPlaylist = trending;
+            } else {
+              currentPlaylist = audiomackTracks;
+            }
+            listHeader.textContent = 'Trending Afrobeats';
+            renderList(currentPlaylist);
+            loadTrack(0);
+          })
+          .catch(err => {
+            console.error('iTunes trending load error:', err);
+            listHeader.textContent = 'Trending Songs';
+            currentPlaylist = audiomackTracks;
+            renderList(currentPlaylist);
+            loadTrack(0);
+          });
+      }
+
+      loadTrendingSongs();
+    };
+
+    contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const action = item.dataset.action;
+        if (action === 'refresh') {
+          location.reload();
+        }
+      });
+    });
+
+    const powerBtn = document.getElementById('powerBtn');
+    const powerMenu = document.getElementById('powerMenu');
+    const sleepOverlay = document.getElementById('sleepOverlay');
+
+    powerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      powerMenu.classList.toggle('visible');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!powerMenu.contains(e.target) && e.target !== powerBtn && !powerBtn.contains(e.target)) {
+        powerMenu.classList.remove('visible');
+      }
+    });
+
+    document.getElementById('powerLock').addEventListener('click', (e) => {
+      e.stopPropagation();
+      powerMenu.classList.remove('visible');
+      startMenu.classList.remove('visible');
+      startBtn.classList.remove('active');
+      desktop.classList.remove('visible');
+      loginScreen.classList.remove('visible');
+      lockScreen.classList.remove('unlocking');
+      isLocked = true;
+    });
+
+    document.getElementById('powerSleep').addEventListener('click', (e) => {
+      e.stopPropagation();
+      powerMenu.classList.remove('visible');
+      startMenu.classList.remove('visible');
+      startBtn.classList.remove('active');
+      sleepOverlay.style.display = 'flex';
+      sleepOverlay.innerHTML = '';
+    });
+
+    ['click', 'keydown'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        if (sleepOverlay.style.display === 'flex' && sleepOverlay.innerHTML === '') {
+          sleepOverlay.style.display = 'none';
+        }
+      });
+    });
+
+    document.getElementById('powerShutdown').addEventListener('click', (e) => {
+      e.stopPropagation();
+      powerMenu.classList.remove('visible');
+      startMenu.classList.remove('visible');
+      startBtn.classList.remove('active');
+      desktop.classList.remove('visible');
+      sleepOverlay.style.display = 'flex';
+      sleepOverlay.innerHTML = '<div style="color: white; font-family: Segoe UI, sans-serif; font-size: 24px;">Shutting down...</div>';
+      setTimeout(() => {
+        sleepOverlay.innerHTML = '';
+        sleepOverlay.onclick = () => location.reload();
+      }, 2000);
+    });
+
+    document.getElementById('powerRestart').addEventListener('click', (e) => {
+      e.stopPropagation();
+      powerMenu.classList.remove('visible');
+      startMenu.classList.remove('visible');
+      startBtn.classList.remove('active');
+      desktop.classList.remove('visible');
+      sleepOverlay.style.display = 'flex';
+      sleepOverlay.innerHTML = '<div style="color: white; font-family: Segoe UI, sans-serif; font-size: 24px;">Restarting...</div>';
+      setTimeout(() => location.reload(), 2000);
+    });
+  </script>
+</body>
+
+</html>
